@@ -1,0 +1,1 @@
+grep 'mass='$(printf "%.6f" $1)' TRIPLET' | grep -v _im= | grep -v _disc= | perl -n -e's/\[MAIN\]\[0\]conf #\d+ mass=-*[\.\d]+ TRIPLET //g; chomp; s/=//g; s/[A-Z_]* TRIPLET//g; print "$_\n" unless ($_=~/^\s?$/);' | perl -n -e'$a=int(($.-1)/17); print "$a $_";'

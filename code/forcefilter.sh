@@ -1,0 +1,1 @@
+grep " ave" | perl -n -e'print "$. $_";' | perl -n -e's/\[FORCE_SUMMARY\]\[0\]*[\.\d]+ ave Gauge\://g; chomp; s/\, Fermion\://g; chomp; s/\, Hasen 0\://g; chomp; s/\, Hasen 1\://g; chomp; print "$_\n";'
