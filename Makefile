@@ -146,7 +146,7 @@ FIG9_10_OUTPUTS := ${FIG9_10_OUT_DIR}/meson_masses.pdf ${FIG9_10_OUT_DIR}/meson_
 FIG9_10_INPUTS := $(foreach MAS, -1.055 -1.06 -1.063 -1.064 -1.065 -1.066 -1.067 -1.068 -1.069 -1.07 -1.072 -1.075, $(foreach INFIX, ps v s, ${PROCESSED_DIR}/corr_$(INFIX)_fit_asy_24x12x12x12b6.35mas$(MAS)mf-0.6.txt))
 
 ${FIG9_10_OUTPUTS} &: ${FIG9_10_INPUTS} | ${FIG9_10_OUT_DIR}
-	${WOLFRAMSCRIPT} -f code/meson_spectra_cr.wls ${FIG9_10_OUTPUTS}
+	${WOLFRAMSCRIPT} -f code/meson_spectra_cr.wls ${PROCESSED_DIR} ${FIG9_10_OUTPUTS}
 
 
 FIG11_15_OUTPUTS := ${FIG11_15_OUT_DIR}/bare_eigvals.pdf ${FIG11_15_OUT_DIR}/eigval_histogram_4x4fun.pdf ${FIG11_15_OUT_DIR}/eigval_histogram_4x4asy.pdf ${FIG11_15_OUT_DIR}/eigval_density.pdf ${FIG11_15_OUT_DIR}/eigval_histogram_3x3.pdf ${FIG11_15_OUT_DIR}/eigval_histogram_4x4fun_trunc.pdf ${FIG11_15_OUT_DIR}/eigval_histogram_3x3fun_trunc.pdf
