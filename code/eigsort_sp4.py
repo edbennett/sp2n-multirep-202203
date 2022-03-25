@@ -13,7 +13,7 @@ args = parser.parse_args()
 eigs = []
 count = 0.5
 
-group, Nc, rep, T, L, beta, m0 = parse_filename(args.filename)
+group, Nc, rep, T, L, beta, m0 = parse_filename(args.input_file)
 volume = T * L ** 3
 neig = 4 * volume * D_R(group, Nc, rep)
 
