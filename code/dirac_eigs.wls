@@ -78,12 +78,6 @@ Export[
  PlotStyle -> Red]},ImageSize->600],{{{Graphics[{RGBColor[0,0,1],Line[{{-.8,0},{1.,0}}]}],Text[Style[MaTeX["SU(2N)/Sp(2N)~~~~~~~~~",Magnification->1.5]]]},{Graphics[{RGBColor[0,.5,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(N)\\times SU(N)/SU(N)",Magnification->1.5]]]},{Graphics[{RGBColor[1,0,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(2N)/SO(2N)~~~~~~~~",Magnification->1.5]]]}},LegendPosition->{-0.03,0.25},LegendTextOffset->{-.45,0},LegendSize->{0.85,.3},ShadowOffset->{0.0,0.0}}]
 ]
 
-sT=Flatten[stmp];
-
-avg=Mean[sT]
-
-sT=sT/avg;(*normalization*)
-
 nlcut=200;
 nscut=100;
 listrange=Flatten[{Table[j,{j,nlcut+1,neig/2-nscut}],Table[j,{j,neig/2+1+nscut,neig-nlcut}]}];
@@ -93,6 +87,11 @@ jtmp=NEIGS (l-1)+nstart+1;
 nsT=Table[1,{j,neig}];
 Do[tmp=eigsortedT[[i]][[1]];count+=1;If[tmp==jtmp,nsT[[jtmp-NEIGS (l-1)-nstart]]=count;jtmp+=1],{i,Length[eigsortedT]}];
 stmp[[l]]=Table[Table[N[(nsT[[delta j+k]]-nsT[[delta (j-1)+k]])/(delta nconf)],{j,listrange}],{k,1,delta}],{l,1,nconf}]
+
+sT=Flatten[stmp];
+avg=Mean[sT]
+sT=sT/avg;(*normalization*)
+
 
 \[Delta]sdensity=Plot[
   PDF[HistogramDistribution[sT,100],x],
