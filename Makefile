@@ -169,13 +169,13 @@ ${SPEC_SUMMARIES} ${LARGE_SUMMARIES} &: ${ENSEMBLES_FILE} | ${CORR_FITS}
 FIG16_17_OUTPUTS := $(foreach BASENAME, m_ps_f_with_inset plaq m_ch m_ps_as_with_inset f_ps m_v, ${FIG16_17_OUT_DIR}/${BASENAME}.pdf)
 FIG16_17_INPUTS := ${FIG17_PLAQS} ${SPEC_SUMMARIES}
 
-${FIG16_17_OUTPUTS} &: ${FIG16_17_OUT_DIR} | ${FIG16_17_INPUTS}
-	${WOLFRAMSCRIPT} -f code/FVeffects.wls $^
+${FIG16_17_OUTPUTS} &: | ${FIG16_17_INPUTS} ${FIG16_17_OUT_DIR}
+	${WOLFRAMSCRIPT} -f code/FVeffects.wls ${PROCESSED_DIR} ${FIG16_17_OUT_DIR}
 
 FIG18_19_OUTPUTS := $(foreach BASENAME, chcorrlogre chcorrre chcorrim chmeff chppcorrre chppcorrim chpplogcorr chppmeff, ${FIG18_19_OUT_DIR}/${BASENAME}.pdf)
 FIG18_19_INPUTS := ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71.txt ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71_projected.txt
 
-${FIG18_19_OUTPUTS} &: ${FIG18_19_OUT_DIR} | ${FIG18_19_INPUTS}
+${FIG18_19_OUTPUTS} &: | ${FIG18_19_INPUTS} ${FIG18_19_OUT_DIR}
 	${WOLFRAMSCRIPT} -f code/chimera_corr.wls ${PROCESSED_DIR} 48x24x24x24b6.5mas-1.01mf-0.71 ${FIT_PARAMS_DIR} ${FIG18_19_OUT_DIR} 48 24 6.5
 
 TAB2_OUTPUT := ${TABLES_DIR}/eig_table.tex
