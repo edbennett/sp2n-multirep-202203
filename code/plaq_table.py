@@ -38,7 +38,9 @@ def get_args():
     parser = ArgumentParser()
     parser.add_argument('ensembles_file')
     parser.add_argument('--data_dir', default='data')
-    parser.add_argument('--output_file', type=FileType('w'), default='-')
+    parser.add_argument('--table_output_file', type=FileType('w'), default='-')
+    parser.add_argument('--mathematica_output_file',
+                        type=FileType('w'), default='-')
     return parser.parse_args()
 
 
@@ -100,6 +102,13 @@ def get_seed(array):
     return (array * 1e6).astype(int).sum()
 
 
+def format_mathematica(ensembles, plaquettes):
+    formatted_values = []
+    for _, (_, plaquette) in zip_dict_sorted(ensembles, plaquettes):
+        formatted_values.append(f'{plaquette.n} {plaquette.s}')
+    return '\n'.join(formatted_values)
+
+
 def main():
     args = get_args()
     ensembles = get_ensembles(args.ensembles_file)
@@ -110,7 +119,9 @@ def main():
         thermalised_plaquettes = plaquettes[ensemble['plaq_therm']:]
         avg_plaquettes[name] = basic_bootstrap(thermalised_plaquettes,
                                                seed=get_seed(plaquettes))
-    print(tabulate(ensembles, avg_plaquettes), file=args.output_file)
+    print(tabulate(ensembles, avg_plaquettes), file=args.table_output_file)
+    print(format_mathematica(ensembles, avg_plaquettes),
+          file=args.mathematica_output_file)
 
 
 if __name__ == '__main__':

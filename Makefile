@@ -1,13 +1,14 @@
 # Set this to where you have placed the data
-DATA_DIR = ./data
+DATA_DIR := ./data
 
 # These will be created automatically
-PROCESSED_DIR = ./processed_data
-PLOTS_DIR = ./plots
-TABLES_DIR = ./tables
+PROCESSED_DIR := ./processed_data
+PLOTS_DIR := ./plots
+TABLES_DIR := ./tables
+FIT_PARAMS_DIR := ./fit_params
 
 # Use this on macOS:
-WOLFRAMSCRIPT = /Applications/Mathematica.app/Contents/MacOS/wolframscript
+WOLFRAMSCRIPT := /Applications/Mathematica.app/Contents/MacOS/wolframscript
 
 # Use this on Linux:
 # WOLFRAMSCRIPT = /usr/local/bin/wolframscript
@@ -17,6 +18,11 @@ WOLFRAMSCRIPT = /Applications/Mathematica.app/Contents/MacOS/wolframscript
 
 .PHONY : clean all_plots all_tables paper_outputs
 
+# Keep all intermediary files
+.SECONDARY :
+
+ENSEMBLES_FILE := data/spectrum_ensembles.yaml
+
 FIG1_OUT_DIR := ${PLOTS_DIR}/Fig1_hmc_forces
 FIG45_OUT_DIR := ${PLOTS_DIR}/Fig4-5_mass_scan
 FIG6_OUT_DIR := ${PLOTS_DIR}/Fig6_plaq_suscept
@@ -25,8 +31,10 @@ FIG8_OUT_DIR := ${PLOTS_DIR}/Fig8_cr_plaq_suscept
 FIG9_10_OUT_DIR := ${PLOTS_DIR}/Fig9-10_cr_meson_spectra
 FIG11_15_OUT_DIR := ${PLOTS_DIR}/Fig11-15_unfolded_density
 FIG16_17_OUT_DIR := ${PLOTS_DIR}/Fig16-17_FV_mass_spectrum
+FIG18_19_OUT_DIR := ${PLOTS_DIR}/Fig18-19_chimera_corr
+FIG20_OUT_DIR := ${PLOTS_DIR}/Fig20_mr_spectra
 
-FIG_DIRS := ${FIG1_OUT_DIR} ${FIG45_OUT_DIR} ${FIG6_OUT_DIR} ${FIG7_OUT_DIR} ${FIG8_OUT_DIR} ${FIG9_10_OUT_DIR} ${FIG11_15_OUT_DIR} ${FIG16_17_OUT_DIR}
+FIG_DIRS := ${FIG1_OUT_DIR} ${FIG45_OUT_DIR} ${FIG6_OUT_DIR} ${FIG7_OUT_DIR} ${FIG8_OUT_DIR} ${FIG9_10_OUT_DIR} ${FIG11_15_OUT_DIR} ${FIG16_17_OUT_DIR} ${FIG18_19_OUT_DIR} ${FIG20_OUT_DIR}
 
 ${PROCESSED_DIR} ${TABLES_DIR} ${FIG_DIRS} :
 	mkdir -p $@
@@ -37,27 +45,62 @@ ${PROCESSED_DIR}/force_%.txt : ${DATA_DIR}/out_% | ${PROCESSED_DIR}
 ${PROCESSED_DIR}/plaq_%.txt : ${DATA_DIR}/out_% | ${PROCESSED_DIR}
 	cat $^ | ./code/plaqfilter.sh > $@
 
-${PROCESSED_DIR}/meson_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/mesfilter_ms.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+') > $@
+${PROCESSED_DIR}/meson_corr_fun_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_ms.sh $$(echo $@ | grep -Eo 'mf[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') 17 > $@
 
-${PROCESSED_DIR}/vmeson_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/mesfilter_mv.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+') > $@
+${PROCESSED_DIR}/vmeson_corr_fun_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mv.sh $$(echo $@ | grep -Eo 'mf[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
 
-${PROCESSED_DIR}/atmeson_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/mesfilter_mat.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+') > $@
+${PROCESSED_DIR}/atmeson_corr_fun_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mat.sh $$(echo $@ | grep -Eo 'mf[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
 
-${PROCESSED_DIR}/tmeson_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/mesfilter_mt.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+') > $@
+${PROCESSED_DIR}/tmeson_corr_fun_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mt.sh $$(echo $@ | grep -Eo 'mf[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
 
-${PROCESSED_DIR}/avmeson_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/mesfilter_mav.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+') > $@
+${PROCESSED_DIR}/avmeson_corr_fun_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mav.sh $$(echo $@ | grep -Eo 'mf[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
+
+${PROCESSED_DIR}/meson_corr_asy_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_ms.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') 21 > $@
+
+${PROCESSED_DIR}/vmeson_corr_asy_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mv.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
+
+${PROCESSED_DIR}/atmeson_corr_asy_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mat.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
+
+${PROCESSED_DIR}/tmeson_corr_asy_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mt.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
+
+${PROCESSED_DIR}/avmeson_corr_asy_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/mesfilter_mav.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') > $@
 
 ${PROCESSED_DIR}/ch_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/chbfilter.sh $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+') > $@
+	cat $^ | ./code/chbfilter.sh > $@
 
+${PROCESSED_DIR}/ch_corr_%_projected.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/chbfilter_projected.sh > $@
 
-${PROCESSED_DIR}/corr_I_fit_%.txt ${PROCESSED_DIR}/corr_v_fit_%.txt ${PROCESSED_DIR}/corr_ps_fit_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_%.txt ${PROCESSED_DIR}/vmeson_corr_%.txt
-	${WOLFRAMSCRIPT} -f code/corr_meson.wls $$(echo $@ | grep -Eo 'mas[-0-9.]+' | grep -Eo '[-0-9.]+')
+${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt ${PROCESSED_DIR}/corr_t_fit_asy_%.txt ${PROCESSED_DIR}/corr_av_fit_asy_%.txt ${PROCESSED_DIR}/corr_at_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${PROCESSED_DIR}/tmeson_corr_asy_%.txt ${PROCESSED_DIR}/atmeson_corr_asy_%.txt ${PROCESSED_DIR}/avmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt ${FIT_PARAMS_DIR}/t_params_asy_%.txt ${FIT_PARAMS_DIR}/av_params_asy_%.txt ${FIT_PARAMS_DIR}/at_params_asy_%.txt
+	${WOLFRAMSCRIPT} -f code/corr_ps_f.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
+
+${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt
+	${WOLFRAMSCRIPT} -f code/corr_ps_f.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
+
+${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt
+	${WOLFRAMSCRIPT} -f code/corr_ps_f.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
+
+${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${PROCESSED_DIR}/corr_s_fit_fun_%.txt ${PROCESSED_DIR}/corr_t_fit_fun_%.txt ${PROCESSED_DIR}/corr_av_fit_fun_%.txt ${PROCESSED_DIR}/corr_at_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${PROCESSED_DIR}/tmeson_corr_fun_%.txt ${PROCESSED_DIR}/atmeson_corr_fun_%.txt ${PROCESSED_DIR}/avmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt ${FIT_PARAMS_DIR}/s_params_fun_%.txt ${FIT_PARAMS_DIR}/t_params_fun_%.txt ${FIT_PARAMS_DIR}/av_params_fun_%.txt ${FIT_PARAMS_DIR}/at_params_fun_%.txt
+	${WOLFRAMSCRIPT} -f code/corr_ps_f.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
+
+${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${PROCESSED_DIR}/corr_s_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt ${FIT_PARAMS_DIR}/s_params_fun_%.txt
+	${WOLFRAMSCRIPT} -f code/corr_ps_f.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
+
+${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt
+	${WOLFRAMSCRIPT} -f code/corr_ps_f.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
+
+${PROCESSED_DIR}/corr_ch_fit_%.txt : ${PROCESSED_DIR} ${PROCESSED_DIR}/ch_corr_%.txt ${FIT_PARAMS_DIR} | ${FIT_PARAMS_DIR}/ch_params_%.txt
+	${WOLFRAMSCRIPT} -f code/chimera.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
 ${PROCESSED_DIR}/eigs_% : ${DATA_DIR}/out_eigs_% | ${PROCESSED_DIR}
 	cat $^ | ./code/eigfilter.sh > $@
@@ -100,7 +143,7 @@ ${FIG8_OUTPUTS} &: ${FIG8_INPUTS} | ${FIG8_OUT_DIR}
 
 
 FIG9_10_OUTPUTS := ${FIG9_10_OUT_DIR}/meson_masses.pdf ${FIG9_10_OUT_DIR}/meson_decay_consts.pdf ${FIG9_10_OUT_DIR}/decay_const_ratio.pdf ${FIG9_10_OUT_DIR}/mass_ratio.pdf
-FIG9_10_INPUTS := $(foreach MAS, -1.055 -1.06 -1.063 -1.064 -1.065 -1.066 -1.067 -1.068 -1.069 -1.07 -1.072 -1.075, $(foreach INFIX, ps I v, ${PROCESSED_DIR}/corr_$(INFIX)_fit_24x12x12x12b6.35mas$(MAS)mf-0.6.txt))
+FIG9_10_INPUTS := $(foreach MAS, -1.055 -1.06 -1.063 -1.064 -1.065 -1.066 -1.067 -1.068 -1.069 -1.07 -1.072 -1.075, $(foreach INFIX, ps v s, ${PROCESSED_DIR}/corr_$(INFIX)_fit_asy_24x12x12x12b6.35mas$(MAS)mf-0.6.txt))
 
 ${FIG9_10_OUTPUTS} &: ${FIG9_10_INPUTS} | ${FIG9_10_OUT_DIR}
 	${WOLFRAMSCRIPT} -f code/meson_spectra_cr.wls ${FIG9_10_OUTPUTS}
@@ -113,12 +156,27 @@ ${FIG11_15_OUTPUTS} &: ${FIG11_15_INPUTS} | ${FIG11_15_OUT_DIR}
 	${WOLFRAMSCRIPT} -f code/dirac_eigs.wls ${FIG11_15_OUTPUTS}
 
 
-FIG16_17_OUTPUTS := ${FIG16_17_OUT_DIR}/mps_f_scaling.pdf ${FIG16_17_OUT_DIR}/mps_as_scaling.pdf ${FIG16_17_OUT_DIR}/mcb_f_scaling.pdf ${FIG16_17_OUT_DIR}/mv_scaling.pdf ${FIG16_17_OUT_DIR}/fps_scaling.pdf ${FIG16_17_OUT_DIR}/plaq_scaling.pdf
-FIG16_17_INPUTS := corr_I_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_I_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_at_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_at_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_av_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_av_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_ch_fit_36x8x8x8b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x12x12x12b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x16x16x16b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x18x18x18b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x20x20x20b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_ch_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_ps_fit_36x8x8x8b6.5mas-1.01mf-0.71.txt corr_ps_fit_48x12x12x12b6.5mas-1.01mf-0.71.txt corr_ps_fit_48x16x16x16b6.5mas-1.01mf-0.71.txt corr_ps_fit_48x18x18x18b6.5mas-1.01mf-0.71.txt corr_ps_fit_48x20x20x20b6.5mas-1.01mf-0.71.txt corr_ps_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_ps_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_t_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_t_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_v_fit_36x8x8x8b6.5mas-1.01mf-0.71.txt corr_v_fit_48x12x12x12b6.5mas-1.01mf-0.71.txt corr_v_fit_48x16x16x16b6.5mas-1.01mf-0.71.txt corr_v_fit_48x18x18x18b6.5mas-1.01mf-0.71.txt corr_v_fit_48x20x20x20b6.5mas-1.01mf-0.71.txt corr_v_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_v_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt
+CORR_FITS := corr_s_fit_asy_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_s_fit_asy_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_at_fit_asy_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_at_fit_asy_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_av_fit_asy_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_av_fit_asy_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_ch_fit_36x8x8x8b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x12x12x12b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x16x16x16b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x18x18x18b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x20x20x20b6.5mas-1.01mf-0.71.txt corr_ch_fit_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_ch_fit_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_36x8x8x8b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_48x12x12x12b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_48x16x16x16b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_48x18x18x18b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_48x20x20x20b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_ps_fit_asy_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_t_fit_asy_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_t_fit_asy_54x28x28x28b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_36x8x8x8b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_48x12x12x12b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_48x16x16x16b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_48x18x18x18b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_48x20x20x20b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_48x24x24x24b6.5mas-1.01mf-0.71.txt corr_v_fit_asy_54x28x28x28b6.5mas-1.01mf-0.71.txt
+#
 
-${FIG16_17_OUTPUTS} &: ${FIG16_17_INPUTS} | ${FIG16_17_OUT_DIR}
-	${WOLFRAMSCRIPT} -f code/FVeffects.wls ${FIG16_17_OUTPUTS}
+FIG17_PLAQS := ${PROCESSED_DIR}/plaquettes.txt
+SPEC_SUMMARIES := $(foreach SUFFIX, mps_fun fps_fun mv_fun mt_fun mav_fun mat_fun ms_fun mch mps_asy fps_asy mv_asy mt_asy mav_asy mat_asy ms_asy, ${PROCESSED_DIR}/summary_${SUFFIX}.txt)
+LARGE_SUMMARIES := $(foreach SUFFIX, asy fun ch, ${PROCESSED_DIR}/large_${SUFFIX}.txt)
 
+${SPEC_SUMMARIES} ${LARGE_SUMMARIES} &: ${ENSEMBLES_FILE} ${PROCESSED_DIR} | ${CORR_FITS}
+	python code/summarize.py ${ENSEMBLES_FILE} --data_dir ${PROCESSED_DIR} --output_dir ${PROCESSED_DIR}
+
+FIG16_17_OUTPUTS := $(foreach BASENAME, m_ps_f_with_inset plaq m_ch m_ps_as_with_inset f_ps m_v, ${FIG16_17_OUT_DIR}/${BASENAME}.pdf)
+FIG16_17_INPUTS := ${FIG17_PLAQS} ${SPEC_SUMMARIES}
+
+${FIG16_17_OUTPUTS} &: ${PROCESSED_DIR} ${FIG16_17_OUT_DIR} | ${FIG16_17_INPUTS}
+	${WOLFRAMSCRIPT} -f code/FVeffects.wls $^
+
+FIG18_19_OUTPUTS := $(foreach BASENAME, chcorrlogre chcorrre chcorrim chmeff chppcorrre chppcorrim chpplogcorr chppmeff, ${FIG18_19_OUT_DIR}/${BASENAME}.pdf)
+FIG18_19_INPUTS := ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71.txt ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71_projected.txt
+
+${FIG18_19_OUTPUTS} &: ${PROCESSED_DIR} ${FIG18_19_OUT_DIR} | ${FIG18_19_INPUTS}
+	${WOLFRAMSCRIPT} -f code/chimera_corr.wls ${PROCESSED_DIR} 48x24x24x24b6.5mas-1.01mf-0.71 ${FIT_PARAMS_DIR} ${FIG18_19_OUT_DIR} 48 24 6.5
 
 TAB2_OUTPUT := ${TABLES_DIR}/eig_table.tex
 TAB2_INPUTS := $(foreach SUFFIX, su2_4x4x4x4b1.8mf-1.0 su4_4x4x4x4b10.0mf-0.2 su4_4x4x4x4b10.0mas-0.2 4x4x4x4b8.0mf-0.2 4x4x4x4b8.0mas-0.2, ${PROCESSED_DIR}/eigs_${SUFFIX})
@@ -129,10 +187,21 @@ ${TAB2_OUTPUT} : ${TAB2_INPUTS} | ${TABLES_DIR}
 
 TAB3_OUTPUT := ${TABLES_DIR}/plaq_table.tex
 TAB3_INPUT_DATA := $(foreach VOLUME, 36x8x8x8 48x12x12x12 48x16x16x16 48x18x18x18 48x20x20x20 48x24x24x24 54x28x28x28, ${DATA_DIR}/out_${VOLUME}b6.5mas-1.01mf-0.71)
-ENSEMBLES_FILE := data/spectrum_ensembles.yaml
 
-${TAB3_OUTPUT} : ${ENSEMBLES_FILE} | ${TAB3_INPUT_DATA} ${TABLES_DIR}
-	python code/plaq_table.py $^ --data_dir ${DATA_DIR} --output_file $@
+${TAB3_OUTPUT} ${FIG17_PLAQS} &: ${ENSEMBLES_FILE} | ${TAB3_INPUT_DATA} ${TABLES_DIR}
+	python code/plaq_table.py $^ --data_dir ${DATA_DIR} --table_output_file=${TAB3_OUTPUT} --mathematica_output_file=${FIG17_PLAQS}
+
+
+TAB456_OUTPUT := $(foreach SUFFIX, fun asy large, ${TABLES_DIR}/spectrum_${SUFFIX}.tex)
+
+${TAB456_OUTPUT} &: ${ENSEMBLES_FILE} ${PROCESSED_DIR} ${TABLES_DIR} | ${CORR_FITS}
+	python code/spectrumtables.py ${ENSEMBLES_FILE} --data_dir=${PROCESSED_DIR} --output_dir=${TABLES_DIR}
+
+
+FIG20_OUTPUT := ${FIG20_OUT_DIR}/spectrum.pdf
+
+${FIG20_OUTPUT} : ${FIG20_OUT_DIR} | ${LARGE_SUMMARIES}
+	${WOLFRAMSCRIPT} -f code/spectrum_large.wls ${PROCESSED_DIR} ${FIG20_OUT_DIR}
 
 
 clean-tables :
@@ -146,9 +215,9 @@ clean-data :
 
 clean : clean-tables clean-plots clean-data
 
-all_plots : ${FIG1_OUT_DIR}/force_summary.pdf ${FIG45_OUTPUTS} ${FIG6_OUTPUTS} ${FIG7_OUTPUTS} ${FIG8_OUTPUTS} ${FIG9_10_OUTPUTS} ${FIG11_15_OUTPUTS}
+all_plots : ${FIG1_OUT_DIR}/force_summary.pdf ${FIG45_OUTPUTS} ${FIG6_OUTPUTS} ${FIG7_OUTPUTS} ${FIG8_OUTPUTS} ${FIG9_10_OUTPUTS} ${FIG11_15_OUTPUTS} ${FIG16_17_OUTPUTS} ${FIG18_19_OUTPUTS} ${FIG20_OUTPUT}
 
-all_tables : ${TAB2_OUTPUT} ${TAB3_OUTPUT}
+all_tables : ${TAB2_OUTPUT} ${TAB3_OUTPUT} ${TAB456_OUTPUT}
 
 paper_outputs : all_plots all_tables
 
