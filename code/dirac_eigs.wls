@@ -37,7 +37,7 @@ kappa=1/(8+2 m0);
 NEIGS=NT NS NS NS NC dr
 NCUT=1296
 
-eigimport=Import[StringJoin["processed_data/eigs_sorted_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mf",ToString[m0ND]],"Table"];
+eigimport=Import[StringJoin[$ScriptCommandLine[[2]], "/eigs_sorted_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mf",ToString[m0ND]],"Table"];
 
 nconf=Length[eigimport]/(NT NS NS NS NC dr)
 neig=Length[eigimport]/nconf
@@ -70,7 +70,7 @@ Show[{\[Delta]sdensity,Plot[probf[1,s],{s,0,dsmax},PlotStyle->RGBColor[0,0,1]],P
 
 (*Fig. 14*)
 Export[
-  $ScriptCommandLine[[6]],
+  $ScriptCommandLine[[7]],
   ShowLegend[dsmax=3;
     Show[{\[Delta]sdensity, Plot[probf[1, s], {s, 0, dsmax},
  PlotStyle -> RGBColor[0, 0, 1]], Plot[probf[2, s], {s, 0, dsmax},
@@ -111,7 +111,7 @@ stmp[[l]]=Table[Table[N[(nsT[[delta j+k]]-nsT[[delta (j-1)+k]])/(delta nconf)],{
 
 (*Fig. 15*)
 Export[
-  $ScriptCommandLine[[8]],
+  $ScriptCommandLine[[9]],
   ShowLegend[dsmax=3;
   Show[{\[Delta]sdensity,Plot[probf[1,s],{s,0,dsmax},PlotStyle->RGBColor[0,0,1]],Plot[probf[2,s],{s,0,dsmax},PlotStyle->RGBColor[0,.5,0]],Plot[probf[4,s],{s,0,dsmax},PlotStyle->Red]},ImageSize->600],{{{Graphics[{RGBColor[0,0,1],Line[{{-.8,0},{1.,0}}]}],Text[Style[MaTeX["SU(2N)/Sp(2N)~~~~~~~~~",Magnification->1.5]]]},{Graphics[{RGBColor[0,.5,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(N)\\times SU(N)/SU(N)",Magnification->1.5]]]},{Graphics[{RGBColor[1,0,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(2N)/SO(2N)~~~~~~~~",Magnification->1.5]]]}},LegendPosition->{-0.03,0.25},LegendTextOffset->{-.45,0},LegendSize->{0.85,.3},ShadowOffset->{0.0,0.0}}]
 ]
@@ -131,7 +131,7 @@ dr=4;(*dimension of the representation*)
 NEIGS=NT NS NS NS NC dr
 NCUT=4096
 
-eigimport=Import[StringJoin["processed_data/eigs_sorted_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mf",ToString[m0ND]],"Table"];
+eigimport=Import[StringJoin[$ScriptCommandLine[[2]], "/eigs_sorted_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mf",ToString[m0ND]],"Table"];
 
 nconf=Length[eigimport]/(NT NS NS NS NC dr)
 neig=Length[eigimport]/nconf
@@ -152,7 +152,7 @@ stmp[[l]]=Table[Table[N[(nsT[[delta j+k]]-nsT[[delta (j-1)+k]])/(delta nconf)],{
 
 (*Fig. 13*)
 Export[
-  $ScriptCommandLine[[5]],
+  $ScriptCommandLine[[6]],
   Show[Table[ListPlot[Table[{j,stmp[[k]][[1]][[j]]},{j,1,Length[stmp[[1]][[1]]]}],PlotRange->{{0,neig},{0,15}},Frame->True,FrameLabel->{MaTeX["n",Magnification->2],MaTeX["s_n",Magnification->2]},FrameStyle->Directive[Black],BaseStyle->texStyle,ImageSize->600],{k,1, nconf}]]
 ]
 
@@ -168,7 +168,7 @@ dsmax=3;
 
 (*Fig. 12*)
 Export[
-  $ScriptCommandLine[[3]],
+  $ScriptCommandLine[[4]],
   ShowLegend[dsmax=3;
   Show[{\[Delta]sdensity,Plot[probf[1,s],{s,0,dsmax},PlotStyle->RGBColor[0,0,1]],Plot[probf[2,s],{s,0,dsmax},PlotStyle->RGBColor[0,.5,0]],Plot[probf[4,s],{s,0,dsmax},PlotStyle->Red]},ImageSize->600],{{{Graphics[{RGBColor[0,0,1],Line[{{-.8,0},{1.,0}}]}],Text[Style[MaTeX["SU(2N)/Sp(2N)~~~~~~~~~",Magnification->1.5]]]},{Graphics[{RGBColor[0,.5,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(N)\\times SU(N)/SU(N)",Magnification->1.5]]]},{Graphics[{RGBColor[1,0,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(2N)/SO(2N)~~~~~~~~",Magnification->1.5]]]}},LegendPosition->{-0.03,0.25},LegendTextOffset->{-.45,0},LegendSize->{0.85,.3},ShadowOffset->{0.0,0.0}}]
 ]
@@ -198,7 +198,7 @@ Show[{\[Delta]sdensity,Plot[probf[1,s],{s,0,dsmax},PlotStyle->RGBColor[0,0,1]],P
 
 (*Fig. 15*)
 Export[
-  $ScriptCommandLine[[7]],
+  $ScriptCommandLine[[8]],
   ShowLegend[dsmax=3;
   Show[{\[Delta]sdensity,Plot[probf[1,s],{s,0,dsmax},PlotStyle->RGBColor[0,0,1]],Plot[probf[2,s],{s,0,dsmax},PlotStyle->RGBColor[0,.5,0]],Plot[probf[4,s],{s,0,dsmax},PlotStyle->Red]},ImageSize->600],{{{Graphics[{RGBColor[0,0,1],Line[{{-.8,0},{1.,0}}]}],Text[Style[MaTeX["SU(2N)/Sp(2N)~~~~~~~~~",Magnification->1.5]]]},{Graphics[{RGBColor[0,.5,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(N)\\times SU(N)/SU(N)",Magnification->1.5]]]},{Graphics[{RGBColor[1,0,0],Line[{{-.8,0},{1,0}}]}],Text[Style[MaTeX["SU(2N)/SO(2N)~~~~~~~~",Magnification->1.5]]]}},LegendPosition->{-0.03,0.25},LegendTextOffset->{-.45,0},LegendSize->{0.85,.3},ShadowOffset->{0.0,0.0}}]
 ]
@@ -220,7 +220,7 @@ dgen=2;
 NEIGS=NT NS NS NS NC dr/dgen
 NCUT=5120/dgen
 
-eigimport=Import[StringJoin["processed_data/eigs_sorted_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mas",ToString[m0ND]],"Table"];
+eigimport=Import[StringJoin[$ScriptCommandLine[[2]], "/eigs_sorted_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mas",ToString[m0ND]],"Table"];
 
 nconf=Length[eigimport]/(NT NS NS NS NC dr) dgen
 neig=Length[eigimport]/nconf
@@ -251,7 +251,7 @@ dsmax=3;
 Show[{\[Delta]sdensity,Plot[probf[1,s],{s,0,dsmax},PlotStyle->RGBColor[0,0,1]],Plot[probf[2,s],{s,0,dsmax},PlotStyle->RGBColor[0,.5,0]],Plot[probf[4,s],{s,0,dsmax},PlotStyle->Red]},ImageSize->600]
 
 Export[
-  $ScriptCommandLine[[4]],
+  $ScriptCommandLine[[5]],
   ShowLegend[dsmax=3;
     Show[
       {
@@ -325,11 +325,11 @@ m0=ToExpression[m0ND];
 dr=5;(*dimension of the representation)*)
 kappa=1/(8+2 m0);
 
-eigimport=Import[StringJoin["data/eigs_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mas",ToString[m0ND]],"Table"];
+eigimport=Import[StringJoin[$ScriptCommandLine[[2]], "/eigs_",ToString[NT],"x",ToString[NS],"x",ToString[NS],"x",ToString[NS],"b",ToString[beta1],".",ToString[beta2],"mas",ToString[m0ND]],"Table"];
 
 NEIGS=NT NS NS NS NC dr
 
 Export[
-  $ScriptCommandLine[[2]],
+  $ScriptCommandLine[[3]],
   ListPlot[Table[{j-2560,eigimport[[j]][[4]]},{j,2561,2592}],PlotRange->{{0,33},All},Frame->True,FrameLabel->{MaTeX["n",Magnification->2],MaTeX["\\lambda_n",Magnification->2]},FrameStyle->Directive[Black],BaseStyle->texStyle,ImageSize->600]
 ]
