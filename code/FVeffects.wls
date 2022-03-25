@@ -34,12 +34,12 @@ plaqplot =
    Table[{{mfpsT[[Length[mfpsT]]][[1]]*llist[[j]], plaqT[[j]][[1]]},
      ErrorBar[plaqT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{2, 10.5}, {0.585, 0.58585}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[0, 0, 1],
+   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[0, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2],
      MaTeX["\\langle \\mathcal{P} \\rangle", Magnification -> 2]},
-   BaseStyle -> texStyle, ImageSize -> 500];
+   BaseStyle -> texStyle, ImageSize -> 600];
 
 Export[StringJoin[$ScriptCommandLine[[3]], "/plaq.pdf"], plaqplot]
 
@@ -50,7 +50,7 @@ mpsfplot =
    Table[{{mfpsT[[Length[mfpsT]]][[1]]*llist[[j]], mfpsT[[j]][[1]]},
      ErrorBar[mfpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{2, 10.5}, {0.3, 0.82}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[0, 0, 1],
+   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[0, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2], MaTeX["a\,m^{f}_{\\rm{PS}}", Magnification -> 2]},
@@ -61,7 +61,7 @@ mpsfzoomplot =
    Table[{{mfpsT[[Length[mfpsT]]][[1]]*llist[[j]], mfpsT[[j]][[1]]},
      ErrorBar[mfpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{5, 10.5}, {0.355, 0.392}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[0, 0, 1],
+   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[0, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    BaseStyle -> {FontFamily -> "Times", FontSize -> 15}, ImageSize -> 300];
 
@@ -71,7 +71,7 @@ mpsfplotwithinset =
      ErrorBar[mfpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{2, 10.5}, {0.3, 0.82}},
    Epilog -> Inset[mpsfzoomplot, {7.5, 0.63}], AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[0, 0, 1],
+   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[0, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2], MaTeX["a\,m^{f}_{\\rm{PS}}", Magnification -> 2]},
@@ -85,33 +85,36 @@ fpsfplot =
    Table[{{mfpsT[[Length[mfpsT]]][[1]]*llist[[j]], ffpsT[[j]][[1]]},
      ErrorBar[ffpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{2, 10.5}, {0.03, 0.056}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[0, 0, 1],
+   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[0, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2], MaTeX["a\,f^{f}_{\\rm{PS}}", Magnification -> 2]},
-   LabelStyle -> Directive[22, Black], ImageSize -> 600];
+   LabelStyle -> Directive[22, Black],
+   BaseStyle -> texStyle, ImageSize -> 600];
 
 mvfplot =
   ErrorListPlot[
    Table[{{mfpsT[[Length[mfpsT]]][[1]]*llist[[j]], mvT[[j]][[1]]},
      ErrorBar[mvT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{2, 10.5}, {0.35, 0.85}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[0, 0, 1],
+   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[0, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2], MaTeX["a\,m^{f}_{\\rm{V}}", Magnification -> 2]},
-   LabelStyle -> Directive[22, Black], ImageSize -> 600];
+   LabelStyle -> Directive[22, Black],
+   BaseStyle -> texStyle, ImageSize -> 600];
 
 mchfplot =
   ErrorListPlot[
    Table[{{mfpsT[[Length[mfpsT]]][[1]]*llist[[j]], mchT[[j]][[1]]},
      ErrorBar[mchT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
-   PlotRange -> {{2, 11}, {0.7, 1.066}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[1, 0, 1],
+   PlotRange -> {{2, 11}, {0.7, 1.12}}, AxesStyle -> Thick,
+   PlotMarkers -> {"\[EmptyUpTriangle]", 15}, PlotStyle -> RGBColor[1, 0, 1],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2], MaTeX["a\,m^{f}_{\\rm{CB}}", Magnification -> 2]},
-   LabelStyle -> Directive[22, Black], ImageSize -> 500];
+   LabelStyle -> Directive[22, Black],
+   BaseStyle -> texStyle, ImageSize -> 600];
 
 Export[StringJoin[$ScriptCommandLine[[3]], "/m_ch.pdf"], mchfplot];
 
@@ -132,7 +135,7 @@ mpsasplot =
    Table[{{mfpsT[[Length[mpsT]]][[1]]*llist[[j]], mpsT[[j]][[1]]},
      ErrorBar[mpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{2, 10.5}, {0, 0.82}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[1, 0, 0],
+   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[1, 0, 0],
    AxesStyle -> Black, FrameStyle -> Black,
    FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L",
       Magnification -> 2], MaTeX["a\,m_{\\rm{PS}}", Magnification -> 2]},
@@ -143,7 +146,7 @@ mpsaszoomplot =
    Table[{{mfpsT[[Length[mpsT]]][[1]]*llist[[j]], mpsT[[j]][[1]]},
      ErrorBar[mpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
    PlotRange -> {{5, 10.5}, {0.58, 0.606}}, AxesStyle -> Thick,
-   PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[1, 0, 0],
+   PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[1, 0, 0],
    AxesStyle -> Black, FrameStyle -> Black,
    BaseStyle -> {FontFamily -> "Times", FontSize -> 15}, ImageSize -> 300];
 
@@ -155,7 +158,7 @@ mpsasplotwithinset =
     ErrorBar[mpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
   PlotRange -> {{2, 10.5}, {0.4, 0.62}},
   Epilog -> Inset[mpsaszoomplot, {7.5, 0.48}], AxesStyle -> Thick,
-  PlotMarkers -> {"\[EmptySquare]", 15}, PlotStyle -> RGBColor[1, 0, 0],
+  PlotMarkers -> {"\[EmptyCircle]", 15}, PlotStyle -> RGBColor[1, 0, 0],
   AxesStyle -> Black, FrameStyle -> Black,
   FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L", Magnification -> 2],
      MaTeX["a\,m^{as}_{\\rm{PS}}", Magnification -> 2]},
@@ -169,7 +172,7 @@ fpsasplot =
   Table[{{mfpsT[[Length[mpsT]]][[1]]*llist[[j]], fpsT[[j]][[1]]},
     ErrorBar[fpsT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
   PlotRange -> {{2, 10.5}, {0.0, 0.097}}, FrameStyle -> Black,
-  AxesStyle -> Thick, PlotMarkers -> {"\[EmptySquare]", 15},
+  AxesStyle -> Thick, PlotMarkers -> {"\[EmptyCircle]", 15},
   PlotStyle -> RGBColor[1, 0, 0], AxesStyle -> Black,
   FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L", Magnification -> 2],
      MaTeX["af_{\\rm{PS}}", Magnification -> 2]}, BaseStyle -> texStyle,
@@ -185,7 +188,7 @@ mvasplot =
   Table[{{mfpsT[[Length[mpsT]]][[1]]*llist[[j]], mvT[[j]][[1]]},
     ErrorBar[mvT[[j]][[2]]]}, {j, 1, Length[llist]}], Frame -> True,
   PlotRange -> {{2, 10.5}, {0.0, 0.68}}, FrameStyle -> Black,
-  AxesStyle -> Thick, PlotMarkers -> {"\[EmptySquare]", 15},
+  AxesStyle -> Thick, PlotMarkers -> {"\[EmptyCircle]", 15},
   PlotStyle -> RGBColor[1, 0, 0],
   FrameLabel -> {MaTeX["m_{\\rm{PS}}^{f,\,\\rm{inf}}\,L", Magnification -> 2],
      MaTeX["a\,m_{\\rm{V}}", Magnification -> 2]}, BaseStyle -> texStyle,
