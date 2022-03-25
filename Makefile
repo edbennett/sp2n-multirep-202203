@@ -99,7 +99,7 @@ ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${P
 ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
-${PROCESSED_DIR}/corr_ch_fit_%.txt : ${PROCESSED_DIR} ${PROCESSED_DIR}/ch_corr_%.txt ${FIT_PARAMS_DIR} | ${FIT_PARAMS_DIR}/ch_params_%.txt
+${PROCESSED_DIR}/corr_ch_fit_%.txt : ${PROCESSED_DIR}/ch_corr_%.txt ${FIT_PARAMS_DIR} | ${PROCESSED_DIR} ${FIT_PARAMS_DIR}/ch_params_%.txt
 	${WOLFRAMSCRIPT} -f code/chimera.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
 ${PROCESSED_DIR}/eigs_% : ${DATA_DIR}/out_eigs_% | ${PROCESSED_DIR}
@@ -163,19 +163,19 @@ FIG17_PLAQS := ${PROCESSED_DIR}/plaquettes.txt
 SPEC_SUMMARIES := $(foreach SUFFIX, mps_fun fps_fun mv_fun mt_fun mav_fun mat_fun ms_fun mch mps_asy fps_asy mv_asy mt_asy mav_asy mat_asy ms_asy, ${PROCESSED_DIR}/summary_${SUFFIX}.txt)
 LARGE_SUMMARIES := $(foreach SUFFIX, asy fun ch, ${PROCESSED_DIR}/large_${SUFFIX}.txt)
 
-${SPEC_SUMMARIES} ${LARGE_SUMMARIES} &: ${ENSEMBLES_FILE} ${PROCESSED_DIR} | ${CORR_FITS}
+${SPEC_SUMMARIES} ${LARGE_SUMMARIES} &: ${ENSEMBLES_FILE} | ${CORR_FITS}
 	python code/summarize.py ${ENSEMBLES_FILE} --data_dir ${PROCESSED_DIR} --output_dir ${PROCESSED_DIR}
 
 FIG16_17_OUTPUTS := $(foreach BASENAME, m_ps_f_with_inset plaq m_ch m_ps_as_with_inset f_ps m_v, ${FIG16_17_OUT_DIR}/${BASENAME}.pdf)
 FIG16_17_INPUTS := ${FIG17_PLAQS} ${SPEC_SUMMARIES}
 
-${FIG16_17_OUTPUTS} &: ${PROCESSED_DIR} ${FIG16_17_OUT_DIR} | ${FIG16_17_INPUTS}
+${FIG16_17_OUTPUTS} &: ${FIG16_17_OUT_DIR} | ${FIG16_17_INPUTS}
 	${WOLFRAMSCRIPT} -f code/FVeffects.wls $^
 
 FIG18_19_OUTPUTS := $(foreach BASENAME, chcorrlogre chcorrre chcorrim chmeff chppcorrre chppcorrim chpplogcorr chppmeff, ${FIG18_19_OUT_DIR}/${BASENAME}.pdf)
 FIG18_19_INPUTS := ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71.txt ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71_projected.txt
 
-${FIG18_19_OUTPUTS} &: ${PROCESSED_DIR} ${FIG18_19_OUT_DIR} | ${FIG18_19_INPUTS}
+${FIG18_19_OUTPUTS} &: ${FIG18_19_OUT_DIR} | ${FIG18_19_INPUTS}
 	${WOLFRAMSCRIPT} -f code/chimera_corr.wls ${PROCESSED_DIR} 48x24x24x24b6.5mas-1.01mf-0.71 ${FIT_PARAMS_DIR} ${FIG18_19_OUT_DIR} 48 24 6.5
 
 TAB2_OUTPUT := ${TABLES_DIR}/eig_table.tex
@@ -194,7 +194,7 @@ ${TAB3_OUTPUT} ${FIG17_PLAQS} &: ${ENSEMBLES_FILE} | ${TAB3_INPUT_DATA} ${TABLES
 
 TAB456_OUTPUT := $(foreach SUFFIX, fun asy large, ${TABLES_DIR}/spectrum_${SUFFIX}.tex)
 
-${TAB456_OUTPUT} &: ${ENSEMBLES_FILE} ${PROCESSED_DIR} ${TABLES_DIR} | ${CORR_FITS}
+${TAB456_OUTPUT} &: ${ENSEMBLES_FILE} ${TABLES_DIR} | ${CORR_FITS}
 	python code/spectrumtables.py ${ENSEMBLES_FILE} --data_dir=${PROCESSED_DIR} --output_dir=${TABLES_DIR}
 
 
