@@ -214,8 +214,6 @@ chfit =
  Table[{Mean[Table[Abs[chfitT[[i]][[k]]], {i, 1, Nboot}]],
    StandardDeviation[Table[Abs[chfitT[[i]][[k]]], {i, 1, Nboot}]]}, {k, 1, 2}]
 
-chfit // InputForm
-
 (*Show the effective mass plot with fit results*)
 
 meffchplot =
@@ -226,9 +224,9 @@ meffchplot =
 
 (* Show[chmfitplot, chmeffplot] *)
 
-mchfpiR = {Mean[Table[Abs[chfitT[[i]][[2]]/g5fitT[[i]][[3]]], {i, 1, Nboot}]],
-   StandardDeviation[
-   Table[Abs[chfitT[[i]][[2]]/g5fitT[[i]][[3]]], {i, 1, Nboot}]]}
+(* mchfpiR = {Mean[Table[Abs[chfitT[[i]][[2]]/g5fitT[[i]][[3]]], {i, 1, Nboot}]], *)
+(*    StandardDeviation[ *)
+(*    Table[Abs[chfitT[[i]][[2]]/g5fitT[[i]][[3]]], {i, 1, Nboot}]]} *)
 
 (*export fit results: Subscript[f, PS]^2, Subscript[m, ps]^2, <0|qbar \
 \[Gamma]5 q|PS(>^2), \[Chi]^2/dof, seperation between adjacent \
