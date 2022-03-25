@@ -37,20 +37,18 @@ sets of correlation functions.*)
 (* fetouse: ending point of the fit*)
 (* nconfstart: The initial trajectory at which the thermalization ends.*)
 
-Nconf = If[
+Nconftot = If[
    Length[corrimport]/nch/ntraj - Round[Length[corrimport]/nch/ntraj] >= 0,
    Round[Length[corrimport]/nch/ntraj],
    Round[Length[corrimport]/nch/ntraj] - 1] ;(*number of configurations*)
+Nconf = Nconftot - nconfstart
 
 Ntmax = Length[corrimport[[1]]] - 2; (*number of temporal lattice*)
 
 (* Resampling data and plot effective mass plot *)
 
-(*ntraj1=6;*)
-(*only for \beta=7.2 and m0=-0.6*)
-
 plaqT = Table[
-   plaqimport[[ntraj*(i - 1) + 1 + dev]][[2]], {i, nconfstart + 1, Nconf}];
+   plaqimport[[ntraj*(i - 1) + 1 + dev]][[2]], {i, nconfstart + 1, Nconftot}];
 {Mean[plaqT], StandardDeviation[plaqT]}
 
 ch = 1;(*meson channel, e.g. ch=1 for the correlator of pseudoscalar meson*)
@@ -58,14 +56,14 @@ ch = 1;(*meson channel, e.g. ch=1 for the correlator of pseudoscalar meson*)
 Do[corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]] =
    Append[corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]],
     corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[3]]], {j, nconfstart + 1,
-   Nconf}]; (*copy the correlator at t=0 to that at t=Ntmax to make it \
+   Nconftot}]; (*copy the correlator at t=0 to that at t=Ntmax to make it \
 symmetric.*)
 
 corrg5T =
   Table[Table[
     NS^3 (corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[i]] +
         corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[Ntmax + 6 - i]])/2, {j,
-     nconfstart + 1, Nconf}], {i,
+     nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 + 2}];(*average out the correlators at t and T-t.*)
 
 ch = 17;(*meson channel, e.g. ch=17 for PS - AV correlator*)
@@ -73,21 +71,21 @@ ch = 17;(*meson channel, e.g. ch=17 for PS - AV correlator*)
 Do[corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]] =
    Append[corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]],
     corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[3]]], {j, nconfstart + 1,
-   Nconf}];(*copy the correlator at t=0 to that at t=Ntmax to make it \
+   Nconftot}];(*copy the correlator at t=0 to that at t=Ntmax to make it \
 symmetric.*)
 
 corrg0g5T =
   Table[Table[
     NS^3 (corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[i]] -
         corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[Ntmax + 6 - i]])/2, {j,
-     nconfstart + 1, Nconf}], {i,
+     nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 + 2}]; (*average out the correlators at t and T-t.*)
 
 Nboot = 200; (*number of samples resampled through bootstrapping*)
 
 rndi = Table[
-   Table[Round[RandomReal[{0, 1}] (Nconf - 1 - nconfstart) + 1], {j, Nboot}], {i,
-    Nconf}]; (*generating random numbers*)
+   Table[Round[RandomReal[{0, 1}] (Nconf - 1) + 1], {j, Nboot}], {i,
+    Nconftot}]; (*generating random numbers*)
 
 plaqbootT =
   Table[Mean[Table[plaqT[[rndi[[i]][[j]]]], {i, Nconf}]], {j,
@@ -410,11 +408,12 @@ operators*)
 configurations would be ntraj*4, which take account for the autocorrelation \
 length. There are ntraj sets of correlation functions.*)
 
-Nconf = If[
+Nconftot = If[
    Length[corrimport]/3/ntraj - Round[Length[corrimport]/3/ntraj] >= 0,
    Round[Length[corrimport]/3/ntraj],
    Round[Length[corrimport]/3/ntraj] -
     1] ;(*number of configurations: 3 is for the three spartial directions*)
+
 
 Ntmax = Length[corrimport[[1]]] -
    2;(*number of temporal lattice*)
@@ -430,7 +429,7 @@ Do[corrimport[[(j - 1) + ch]] =
    Append[corrimport[[(j - 1) + ch]], corrimport[[(j - 1) + ch]][[3]]], {j,
    nconfstart + 1,
    3 ntraj*
-    Nconf}];(*copy the correlator at t=0 to that at t=Ntmax to make it \
+    Nconftot}];(*copy the correlator at t=0 to that at t=Ntmax to make it \
 symmetric.*)
 
 
@@ -441,12 +440,12 @@ corrT = Table[
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 1]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 2]][[Ntmax + 6 - i]])/2/
-      3, {j, nconfstart + 1, Nconf}], {i,
+      3, {j, nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 +
      2}]; (*average out the correlators at t and T-t, and also over the three \
 spatial directions.*)
 
-(* Histogram[Table[corrT[[20]][[i]], {i, Nconf}]]; *)
+(* Histogram[Table[corrT[[20]][[i]], {i, Nconftot}]]; *)
 
 corrbootT =
   Table[Table[
@@ -688,17 +687,11 @@ If[FileExistsQ[scalarParamsFile],None,Quit[]];
 
 {ntraj,dev,fstouse,fetouse,nconfstart} = Flatten[Import[scalarParamsFile, "Table"]];
 
-
 corrimport =
   Import[StringJoin[$ScriptCommandLine[[2]], "/meson_corr_", rep, "_", $ScriptCommandLine[[3]], ".txt"],
    "Table"]; (*import the correlators for all interpolating operators*)
 
-(*ntraj=7;*)
-(*Number of trajectories between adjacent configurations would \
-be ntraj*4, which take account for the autocorrelation length. There are \
-ntraj sets of correlation functions.*)
-
-Nconf = If[
+Nconftot = If[
    Length[corrimport]/nch/ntraj - Round[Length[corrimport]/nch/ntraj] >= 0,
    Round[Length[corrimport]/nch/ntraj],
    Round[Length[corrimport]/nch/ntraj] - 1] ;(*number of configurations*)
@@ -712,13 +705,13 @@ ch = 2;(*meson channel, e.g. ch=1 for the correlator of pseudoscalar meson*)
 Do[corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]] =
    Append[corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]],
     corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[3]]], {j, nconfstart + 1,
-   Nconf}]; (*copy the correlator at t=0 to that at t=Ntmax to make it \
+   Nconftot}]; (*copy the correlator at t=0 to that at t=Ntmax to make it \
 symmetric.*)
 
 corrIT = Table[
    Table[NS^3 (corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[i]] +
         corrimport[[ntraj*nch*(j - 1) + dev*nch + ch]][[Ntmax + 6 - i]])/2, {j,
-     nconfstart + 1, Nconf}], {i,
+     nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 + 2}];(*average out the correlators at t and T-t.*)
 
 corrbootT =
@@ -932,7 +925,7 @@ operators*)
 configurations would be ntraj*4, which take account for the autocorrelation \
 length. There are ntraj sets of correlation functions.*)
 
-Nconf = If[
+Nconftot = If[
    Length[corrimport]/3/ntraj - Round[Length[corrimport]/3/ntraj] >= 0,
    Round[Length[corrimport]/3/ntraj],
    Round[Length[corrimport]/3/ntraj] -
@@ -951,7 +944,7 @@ Do[corrimport[[(j - 1) + ch]] =
    Append[corrimport[[(j - 1) + ch]], corrimport[[(j - 1) + ch]][[3]]], {j,
    nconfstart + 1,
    3 ntraj*
-    Nconf}];(*copy the correlator at t=0 to that at t=Ntmax to make it \
+    Nconftot}];(*copy the correlator at t=0 to that at t=Ntmax to make it \
 symmetric.*)
 
 corrT = Table[
@@ -961,7 +954,7 @@ corrT = Table[
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 1]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 2]][[Ntmax + 6 - i]])/2/
-      3, {j, nconfstart + 1, Nconf}], {i,
+      3, {j, nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 +
      2}]; (*average out the correlators at t and T-t, and also over the three \
 spatial directions.*)
@@ -1186,7 +1179,7 @@ interpolating operators*)
 adjacent configurations would be ntraj*4, which take account for the \
 autocorrelation length. There are ntraj sets of correlation functions.*)
 
-Nconf = If[
+Nconftot = If[
    Length[corrimport]/3/ntraj - Round[Length[corrimport]/3/ntraj] >= 0,
    Round[Length[corrimport]/3/ntraj],
    Round[Length[corrimport]/3/ntraj] -
@@ -1202,7 +1195,7 @@ mk_mesons_with_z2semwall_new *)
 
 Do[corrimport[[(j - 1) + ch]] =
    Append[corrimport[[(j - 1) + ch]], corrimport[[(j - 1) + ch]][[3]]], {j,
-   nconfstart + 1, 3 ntraj*Nconf}];
+   nconfstart + 1, 3 ntraj*Nconftot}];
 (*copy the correlator at t=0 to that at t=Ntmax to make it symmetric.*)
 
 corrT = Table[
@@ -1212,7 +1205,7 @@ corrT = Table[
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 1]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 2]][[Ntmax + 6 - i]])/2/
-      3, {j, nconfstart + 1, Nconf}], {i,
+      3, {j, nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 +
      2}];(*average out the correlators at t and T-t, and also over the three \
 spatial directions.*)
@@ -1425,7 +1418,7 @@ interpolating operators*)
 adjacent configurations would be ntraj*4, which take account for the \
 autocorrelation length. There are ntraj sets of correlation functions.*)
 
-Nconf = If[
+Nconftot = If[
    Length[corrimport]/3/ntraj - Round[Length[corrimport]/3/ntraj] >= 0,
    Round[Length[corrimport]/3/ntraj],
    Round[Length[corrimport]/3/ntraj] -
@@ -1441,7 +1434,7 @@ mk_mesons_with_z2semwall_new *)
 
 Do[corrimport[[(j - 1) + ch]] =
    Append[corrimport[[(j - 1) + ch]], corrimport[[(j - 1) + ch]][[3]]], {j,
-   nconfstart + 1, 3 ntraj*Nconf}];
+   nconfstart + 1, 3 ntraj*Nconftot}];
 (*copy the correlator at t=0 to that at t=Ntmax to make it symmetric.*)
 
 corrT = Table[
@@ -1451,7 +1444,7 @@ corrT = Table[
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 1]][[Ntmax + 6 - i]] +
          corrimport[[ntraj*3*(j - 1) + dev*3 + ch + 2]][[Ntmax + 6 - i]])/2/
-      3, {j, nconfstart + 1, Nconf}], {i,
+      3, {j, nconfstart + 1, Nconftot}], {i,
     3, (Ntmax + 2)/2 +
      2}];(*average out the correlators at t and T-t, and also over the three \
 spatial directions.*)
