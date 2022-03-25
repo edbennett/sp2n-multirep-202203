@@ -56,6 +56,11 @@ version of Make installed on macOS by default.
   directory. Intermediary files not included in the publication are held in
   the `processed_data` directory. Each of these will be created by `make`
   automatically.
+* The analysis will run in parallel by using `make -j N`, where `N` is replaced
+  by the number of parallel jobs to use. This will only work as long as `N`
+  does not exceed the number of Mathematica kernels you are licensed to launch
+  on your machine (minus any you have running).
+* On a single Apple M1 CPU core, the full analysis takes around an hour.
 
 
 [multirep-paper]: https://arxiv.org/abs/2202.05516
