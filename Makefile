@@ -1,11 +1,11 @@
-# Set this to where you have placed the data
+# Set this to where you have placed the data and fit parameters
 DATA_DIR := ./data
+FIT_PARAMS_DIR := ./fit_params
 
 # These will be created automatically
 PROCESSED_DIR := ./processed_data
 PLOTS_DIR := ./plots
 TABLES_DIR := ./tables
-FIT_PARAMS_DIR := ./fit_params
 
 # Use this on macOS:
 WOLFRAMSCRIPT := /Applications/Mathematica.app/Contents/MacOS/wolframscript

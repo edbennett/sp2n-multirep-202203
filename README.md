@@ -35,11 +35,15 @@ version of Make installed on macOS by default.
   to create a new Conda environment including the requisite packages.
   (Alternatively, create a Python environment with the listed packages, and
   ensure that you have GNU Make 4.3 or later.)
+* Adjust the `Makefile` to point to the correct location of your copy of
+  `wolframscript`.
 
 ### Data
 
 * Download and extract the data. Specifically, you need the two directories
-  `data`, and `fit_params`.
+  `data`, and `fit_params`. By default it is expected that these are placed
+  in the root directory of the repository, but this can be changed in the
+  `Makefile`.
 
 ### Running the analysis
 
