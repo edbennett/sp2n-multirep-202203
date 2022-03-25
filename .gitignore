@@ -1,1 +1,7 @@
 __pycache__
+data
+data_by_output
+fit_params
+plots
+processed_data
+tables
