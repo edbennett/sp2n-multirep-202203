@@ -178,7 +178,7 @@ fpsasplot =
 (* FIGURE 17 lower left *)
 
 Export[StringJoin[$ScriptCommandLine[[3]], "/f_ps.pdf"],
-  Show[{fpsfplot, fpsasplot}]];
+  Show[{fpsfplot, fpsasplot}, PlotRange -> {{2, 10.5}, {0.03, 0.092}}]];
 
 mvasplot =
  ErrorListPlot[
