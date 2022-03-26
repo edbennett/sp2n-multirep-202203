@@ -49,7 +49,7 @@ traj0T={651,101,101,101,101,101,101,551,101};dtrajT={9,8,14,10,18,24,28,18,9};
 Do[traj0=traj0T[[j]];dtraj=dtrajT[[j]];
 plaqimport=Table[plaqRimport[[j]][[dtraj*i+traj0]][[2]],{i,1,(Length[plaqRimport[[j]]]-traj0)/dtraj}];plaqmean=Mean[plaqimport];
 Nconf=Length[plaqimport];
-Nboot=100;Print[Nconf];
+Nboot=100;
 rndi=Table[Table[Round[RandomReal[{0,1}] (Nconf-1)+1],{j,Nboot}],{i,Nconf}];
 plaqbootT=Table[Mean[Table[plaqimport[[rndi[[i]][[j]]]],{i,Nconf}]],{j,Nboot}];plaqsusbootT=Table[Mean[Table[12^4 (plaqimport[[rndi[[i]][[j]]]]-plaqmean)^2,{i,Nconf}]],{j,Nboot}];
 plaqRdata[j]={masT[[j]],Mean[plaqbootT],StandardDeviation[plaqbootT]};plaqsusRdata[j]={masT[[j]],Mean[plaqsusbootT],StandardDeviation[plaqsusbootT]},{j,1,Length[masT]}]
@@ -76,7 +76,7 @@ traj0T={101,101,101,101,101,101,101,401,101};dtrajT={13,11,13,16,16,23,20,16,12}
 Do[traj0=traj0T[[j]];dtraj=dtrajT[[j]];
 plaqimport=Table[plaqRimport[[j]][[dtraj*i+traj0]][[2]],{i,1,(Length[plaqRimport[[j]]]-traj0)/dtraj}];plaqmean=Mean[plaqimport];
 Nconf=Length[plaqimport];
-Nboot=100;Print[Nconf];
+Nboot=100;
 rndi=Table[Table[Round[RandomReal[{0,1}] (Nconf-1)+1],{j,Nboot}],{i,Nconf}];
 plaqbootT=Table[Mean[Table[plaqimport[[rndi[[i]][[j]]]],{i,Nconf}]],{j,Nboot}];plaqsusbootT=Table[Mean[Table[16^4 (plaqimport[[rndi[[i]][[j]]]]-plaqmean)^2,{i,Nconf}]],{j,Nboot}];
 plaqRdata[j]={masT[[j]],Mean[plaqbootT],StandardDeviation[plaqbootT]};plaqsusRdata[j]={masT[[j]],Mean[plaqsusbootT],StandardDeviation[plaqsusbootT]},{j,1,Length[masT]}]
