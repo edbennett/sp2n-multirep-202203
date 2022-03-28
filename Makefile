@@ -16,7 +16,7 @@ WOLFRAMSCRIPT := /Applications/Mathematica.app/Contents/MacOS/wolframscript
 # Use this on Windows:
 # WOLFRAMSCRIPT = 'c:\Program Files\Wolfram Research\Mathematica\7.0\wolframscript.exe'
 
-.PHONY : clean all_plots all_tables paper_outputs
+.PHONY : clean clean-plots clean-tables clean-data clean-datapackage all_plots all_tables paper_outputs datapackage
 
 # Keep all intermediary files
 .SECONDARY :
@@ -213,12 +213,20 @@ clean-plots :
 clean-data :
 	rm -r ${PROCESSED_DIR}/*
 
-clean : clean-tables clean-plots clean-data
+clean : clean-tables clean-plots clean-data clean-datapackage
 
 all_plots : ${FIG1_OUT_DIR}/force_summary.pdf ${FIG45_OUTPUTS} ${FIG6_OUTPUTS} ${FIG7_OUTPUTS} ${FIG8_OUTPUTS} ${FIG9_10_OUTPUTS} ${FIG11_15_OUTPUTS} ${FIG16_17_OUTPUTS} ${FIG18_19_OUTPUTS} ${FIG20_OUTPUT}
 
 all_tables : ${TAB2_OUTPUT} ${TAB3_OUTPUT} ${TAB456_OUTPUT}
 
 paper_outputs : all_plots all_tables
+
+datapackage : data.h5
+
+data.h5 : $(wildcard ${DATA_DIR}/out_*)
+	python code/package_data.py $^ --output_file $@
+
+clean-datapackage :
+	rm data.h5
 
 .DEFAULT_GOAL := paper_outputs
