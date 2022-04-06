@@ -79,7 +79,7 @@ ${PROCESSED_DIR}/ch_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
 	cat $^ | ./code/chbfilter.sh > $@
 
 ${PROCESSED_DIR}/ch_corr_%_unprojected.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
-	cat $^ | ./code/chbfilter_projected.sh > $@
+	cat $^ | ./code/chbfilter_unprojected.sh > $@
 
 ${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt ${PROCESSED_DIR}/corr_t_fit_asy_%.txt ${PROCESSED_DIR}/corr_av_fit_asy_%.txt ${PROCESSED_DIR}/corr_at_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${PROCESSED_DIR}/tmeson_corr_asy_%.txt ${PROCESSED_DIR}/atmeson_corr_asy_%.txt ${PROCESSED_DIR}/avmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt ${FIT_PARAMS_DIR}/t_params_asy_%.txt ${FIT_PARAMS_DIR}/av_params_asy_%.txt ${FIT_PARAMS_DIR}/at_params_asy_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
