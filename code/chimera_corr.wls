@@ -16,7 +16,7 @@ beta = ToExpression[$ScriptCommandLine[[8]]];
 
 
 corrimport =
-  Import[StringJoin[$ScriptCommandLine[[2]], "/ch_corr_", $ScriptCommandLine[[3]], ".txt"],
+  Import[StringJoin[$ScriptCommandLine[[2]], "/ch_corr_", $ScriptCommandLine[[3]], "_unprojected.txt"],
    "Table"]; (*import the correlators for 17 interpolating operators*)
 
 {ntraj,dev,fstouse,fetouse,nconfstart} = Flatten[
@@ -47,8 +47,9 @@ corrchimT =
        corrimport[[NT*(ntraj*(j - 1) + dev) + (i - 1) + 1]][[10]]), {j,
      nconfstart + 1, Nconf}], {i, 1, NT}];
 
-Do[corrchreT[[j]] = -corrchreT[[j]];
-  corrchimT[[j]] = -corrchimT[[j]], {j, 1,
+corrchT = corrchreT;
+
+Do[corrchT[[j]] = -corrchT[[j]], {j, 1,
    24}];(*used for the computation of the log plot and effective mass plot*)
 
 nconf = Nconf - nconfstart; (*number of correlators used for the analysis*)
@@ -62,53 +63,52 @@ rndi = Table[
 corrchrebootT =
   Table[Table[
     Mean[Table[corrchreT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - real*)
 
 corrchrebootavgT =
   Table[{k - 1, Mean[corrchrebootT[[k]]],
     StandardDeviation[corrchrebootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
 corrchimbootT =
   Table[Table[
     Mean[Table[corrchimT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - imaginary*)
 
 corrchimbootavgT =
   Table[{k - 1, Mean[corrchimbootT[[k]]],
     StandardDeviation[corrchimbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
-corrchbootT = corrchrebootT;
-corrchbootavgT = corrchrebootavgT;
-
-corrchrelogbootT =
+corrchbootT =
   Table[Table[
-    Log[Mean[Table[corrchreT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+    Mean[Table[corrchT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - real and absolute values*)
 
-corrchrelogbootavgT =
-  Table[{k - 1, Mean[corrchrelogbootT[[k]]],
-    StandardDeviation[corrchrelogbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+corrchbootavgT =
+  Table[{k - 1, Mean[corrchbootT[[k]]],
+    StandardDeviation[corrchbootT[[k]]]}, {k,
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
-corrchimlogbootT =
+
+corrchlogbootT =
   Table[Table[
-    Log[Mean[Table[corrchimT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+    Log[Mean[Table[corrchT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - logarithm*)
 
-corrchimlogbootavgT =
-  Table[{k - 1, Mean[corrchimlogbootT[[k]]],
-    StandardDeviation[corrchimlogbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+corrchlogbootavgT =
+  Table[{k - 1, Mean[corrchlogbootT[[k]]],
+    StandardDeviation[corrchlogbootT[[k]]]}, {k,
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
+
 
 chcorrlogreplot = ErrorListPlot[
- Table[{{corrchrelogbootavgT[[t]][[1]] - 1, corrchrelogbootavgT[[t]][[2]]},
-   ErrorBar[corrchrelogbootavgT[[t]][[3]]]}, {t, 4, NT}], Frame -> True,
+ Table[{{corrchlogbootavgT[[t]][[1]] - 1, corrchlogbootavgT[[t]][[2]]},
+   ErrorBar[corrchlogbootavgT[[t]][[3]]]}, {t, 4, NT}], Frame -> True,
  PlotRange -> {{0, NT - 1}, {All, 1}}, AxesStyle -> Thick,
  PlotMarkers -> {"\[EmptyCircle]", 18}, PlotStyle -> RGBColor[0, 0, 1],
  AxesStyle -> Black,
@@ -159,18 +159,18 @@ chcorrimplot =
 
 Export[StringJoin[$ScriptCommandLine[[5]], "/chcorrim.pdf"], chcorrimplot];
 
-(*Effective mass of pseudoscalar meson*)
+(*Effective mass of chimera baryon*)
 dt = 1;
 meffchtab =
   Table[{i,
     Mean[Table[
-      ArcCosh[(corrchbootT[[i]][[j]] +
-           corrchbootT[[i + 2*dt]][[j]])/(2 corrchbootT[[i + dt]][[j]])]/
+      ArcCosh[(corrchrebootT[[i]][[j]] +
+           corrchrebootT[[i + 2*dt]][[j]])/(2 corrchrebootT[[i + dt]][[j]])]/
        dt, {j, Nboot}]],
     StandardDeviation[
      Table[
-      ArcCosh[(corrchbootT[[i]][[j]] +
-           corrchbootT[[i + 2*dt]][[j]])/(2 corrchbootT[[i + dt]][[j]])]/
+      ArcCosh[(corrchrebootT[[i]][[j]] +
+           corrchrebootT[[i + 2*dt]][[j]])/(2 corrchrebootT[[i + dt]][[j]])]/
        dt, {j, Nboot}]]}, {i, 1, NT - 2*dt}];
 
 chmeffplot =
@@ -192,7 +192,7 @@ Export[StringJoin[$ScriptCommandLine[[5]], "/chmeff.pdf"], chmeffplot];
 (* Import data and choose initial lattice parameters - parity projected *)
 
 corrimport =
-  Import[StringJoin[$ScriptCommandLine[[2]], "/ch_corr_", $ScriptCommandLine[[3]], "_projected.txt"],
+  Import[StringJoin[$ScriptCommandLine[[2]], "/ch_corr_", $ScriptCommandLine[[3]], ".txt"],
    "Table"]; (*import the correlators for 17 interpolating operators*)
 
 Nconf = If[
@@ -227,23 +227,23 @@ corrchimT =
 corrchrebootT =
   Table[Table[
     Mean[Table[corrchreT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - real*)
 
 corrchrebootavgT =
   Table[{k - 1, Mean[corrchrebootT[[k]]],
     StandardDeviation[corrchrebootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
 corrchimbootT =
   Table[Table[
     Mean[Table[corrchimT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - imaginary*)
 
 corrchimbootavgT =
   Table[{k - 1, Mean[corrchimbootT[[k]]],
     StandardDeviation[corrchimbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
 corrchbootT = corrchrebootT;
@@ -285,7 +285,7 @@ chppcorrimplot = ErrorListPlot[
 Export[StringJoin[$ScriptCommandLine[[5]], "/chppcorrim.pdf"], chppcorrimplot];
 
 
-(*Effective mass of pseudoscalar meson*)
+(*Effective mass of chimera baryon*)
 dt = 1;
 meffchtab =
   Table[{i,
@@ -328,23 +328,23 @@ corrchimT =
 corrchrebootT =
   Table[Table[
     Mean[Table[corrchreT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - real*)
 
 corrchrebootavgT =
   Table[{k - 1, Mean[corrchrebootT[[k]]],
     StandardDeviation[corrchrebootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
 corrchimbootT =
   Table[Table[
     Mean[Table[corrchimT[[k]][[rndi[[i]][[j]]]], {i, nconf}]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators*)
 
 corrchimbootavgT =
   Table[{k - 1, Mean[corrchimbootT[[k]]],
     StandardDeviation[corrchimbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators - imaginary \
 correlators*)
 
 corrchbootT = corrchrebootT;
@@ -379,7 +379,7 @@ ErrorListPlot[
  FrameStyle -> Directive[Thickness[0.002], Black], BaseStyle -> texStyle,
  ImageSize -> 600](*effective mass plot*)
 
-(*Effective mass of pseudoscalar meson*)
+(*Effective mass of chimera baryon*)
 dt = 1;
 meffchtab =
   Table[{i,
@@ -414,10 +414,6 @@ corrchreT =
   Table[Table[
     NS^3 corrimport[[NT*(ntraj*(j - 1) + dev) + (i - 1) + 1]][[3]], {j,
      nconfstart + 1, Nconf}], {i, 1, NT}];
-corrchimT =
-  Table[Table[
-    NS^3 corrimport[[NT*(ntraj*(j - 1) + dev) + (i - 1) + 1]][[4]], {j,
-     nconfstart + 1, Nconf}], {i, 1, NT}];
 
 Do[corrchreT[[j]] = -corrchreT[[j]];
   corrchimT[[j]] = -corrchimT[[j]], {j, 1,
@@ -426,24 +422,14 @@ Do[corrchreT[[j]] = -corrchreT[[j]];
 corrchrelogbootT =
   Table[Table[
     Log[Mean[Table[corrchreT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - real*)
 
 corrchrelogbootavgT =
   Table[{k - 1, Mean[corrchrelogbootT[[k]]],
     StandardDeviation[corrchrelogbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
-corrchimlogbootT =
-  Table[Table[
-    Log[Mean[Table[corrchimT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
-
-corrchimlogbootavgT =
-  Table[{k - 1, Mean[corrchimlogbootT[[k]]],
-    StandardDeviation[corrchimlogbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
-correlators*)
 
   logcorrevenplot =
  ErrorListPlot[
@@ -466,32 +452,18 @@ corrchreT =
   Table[Table[
     NS^3 corrimport[[NT*(ntraj*(j - 1) + dev) + (i - 1) + 1]][[5]], {j,
      nconfstart + 1, Nconf}], {i, 1, NT}];
-corrchimT =
-  Table[Table[
-    NS^3 corrimport[[NT*(ntraj*(j - 1) + dev) + (i - 1) + 1]][[6]], {j,
-     nconfstart + 1, Nconf}], {i, 1, NT}];
 
 corrchrelogbootT =
   Table[Table[
     Log[Mean[Table[corrchreT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
+     Nboot}], {k, NT}]; (*resampled data for chimera correlators - real*)
 
 corrchrelogbootavgT =
   Table[{k - 1, Mean[corrchrelogbootT[[k]]],
     StandardDeviation[corrchrelogbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
+    NT}]; (*mean and standard deviation of resampled data for chimera correlators \
 correlators*)
 
-corrchimlogbootT =
-  Table[Table[
-    Log[Mean[Table[corrchimT[[k]][[rndi[[i]][[j]]]], {i, nconf}]]], {j,
-     Nboot}], {k, NT}]; (*resampled data for pseudoscalar correlators*)
-
-corrchimlogbootavgT =
-  Table[{k - 1, Mean[corrchimlogbootT[[k]]],
-    StandardDeviation[corrchimlogbootT[[k]]]}, {k,
-    NT}]; (*mean and standard deviation of resampled data for pseudoscalar \
-correlators*)
 
  logcorroddplot =
  ErrorListPlot[
