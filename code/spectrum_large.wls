@@ -24,7 +24,8 @@ mfallplot =
   PlotStyle -> RGBColor[0, 0, 1], AxesStyle -> Black,
   FrameStyle -> Black,
   FrameLabel -> {"", MaTeX["a m", Magnification -> 2]},
-  LabelStyle -> Directive[22, Black], ImageSize -> 600];
+  LabelStyle -> Directive[22, Black], ImageSize -> 600,
+  BaseStyle -> texStyle];
 
 mchT = Import[StringJoin[$ScriptCommandLine[[2]], "/large_ch.txt"], "Table"];
 
@@ -45,7 +46,8 @@ mchallplot =
   PlotStyle -> RGBColor[1, 0, 1], AxesStyle -> Black,
   FrameStyle -> Black,
   FrameLabel -> {"", MaTeX["a m", Magnification -> 2]},
-  LabelStyle -> Directive[22, Black], ImageSize -> 600];
+  LabelStyle -> Directive[22, Black], ImageSize -> 600,
+  BaseStyle -> texStyle];
 
 masT = Import[StringJoin[$ScriptCommandLine[[2]], "/large_asy.txt"], "Table"];
 
@@ -66,7 +68,8 @@ masallplot =
   PlotStyle -> RGBColor[1, 0, 0], AxesStyle -> Black,
   FrameStyle -> Black,
   FrameLabel -> {"", MaTeX["a m", Magnification -> 2]},
-  LabelStyle -> Directive[22, Black], ImageSize -> 600];
+  LabelStyle -> Directive[22, Black], ImageSize -> 600,
+  BaseStyle -> texStyle];
 
 Export[StringJoin[$ScriptCommandLine[[3]], "/spectrum.pdf"],
  Show[{masallplot, mfallplot, mchallplot},
