@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
+import logging
 from re import compile
-from numpy import mean, std, asarray
+from numpy import mean, std, asarray, loadtxt
 from numpy.random import default_rng
 
 from uncertainties import ufloat
@@ -12,6 +13,7 @@ BOOTSTRAP_SAMPLE_COUNT = 500
 TRAJECTORY_GETTER = compile(
     r'\[MAIN\]\[0\]Trajectory #(?P<trajectory>[0-9]+)'
 )
+SUFFIX_FORMAT = '{Nt}x{Ns}x{Ns}x{Ns}b{beta}mas{m_asy}mf{m_fun}'
 
 
 def basic_bootstrap(values, seed=None):
@@ -38,6 +40,7 @@ def get_args():
     parser = ArgumentParser()
     parser.add_argument('ensembles_file')
     parser.add_argument('--data_dir', default='data')
+    parser.add_argument('--processed_dir', default='processed_data')
     parser.add_argument('--table_output_file', type=FileType('w'), default='-')
     parser.add_argument('--mathematica_output_file',
                         type=FileType('w'), default='-')
@@ -48,8 +51,8 @@ def get_plaquettes_for_ensemble(ensemble, data_dir='data'):
     '''Given an ensemble descriptor, identify the file holding the HMC
     log for the ensemble, and return the plaquette history from it.'''
 
-    hmc_file = 'data/out_{Nt}x{Ns}x{Ns}x{Ns}b{beta}mas{m_asy}mf{m_fun}'
-    return get_plaquettes_from_file(hmc_file.format(**ensemble))
+    hmc_file = data_dir + '/out_' + SUFFIX_FORMAT.format(**ensemble)
+    return get_plaquettes_from_file(hmc_file)
 
 
 def zip_dict_sorted(*dcts):
@@ -109,16 +112,39 @@ def format_mathematica(ensembles, plaquettes):
     return '\n'.join(formatted_values)
 
 
+def get_average_plaquette_from_summary_file(ensemble,
+                                            processed_dir='processed_data'):
+    plaq_summary_file = (
+        processed_dir + '/plaq_avg_' + SUFFIX_FORMAT.format(**ensemble)
+        + '.txt'
+    )
+    value, uncertainty = loadtxt(plaq_summary_file)
+    return ufloat(value, uncertainty)
+
+
+def get_average_plaquette(
+        ensemble, data_dir='data', processed_dir='processed_data'
+):
+    try:
+        return get_average_plaquette_from_summary_file(
+            ensemble, processed_dir=processed_dir
+        )
+    except FileNotFoundError:
+        logging.warn(
+            f"Couldn't open summary for {ensemble['name']}, recalculating"
+        )
+        plaquettes = get_plaquettes_for_ensemble(ensemble, data_dir=data_dir)
+        thermalised_plaquettes = plaquettes[ensemble['plaq_therm']:]
+        return basic_bootstrap(thermalised_plaquettes,
+                               seed=get_seed(plaquettes))
+
+
 def main():
     args = get_args()
     ensembles = get_ensembles(args.ensembles_file)
     avg_plaquettes = {}
     for name, ensemble in ensembles.items():
-        plaquettes = get_plaquettes_for_ensemble(ensemble,
-                                                 data_dir=args.data_dir)
-        thermalised_plaquettes = plaquettes[ensemble['plaq_therm']:]
-        avg_plaquettes[name] = basic_bootstrap(thermalised_plaquettes,
-                                               seed=get_seed(plaquettes))
+        avg_plaquettes[name] = get_average_plaquette(ensemble)
     print(tabulate(ensembles, avg_plaquettes), file=args.table_output_file)
     print(format_mathematica(ensembles, avg_plaquettes),
           file=args.mathematica_output_file)

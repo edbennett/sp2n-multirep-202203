@@ -92,6 +92,13 @@ plaqbootT =
     Nboot}]; (*resampled data for plaquettes*)
 
 plaqbootavg = {Mean[plaqbootT], StandardDeviation[plaqbootT]};
+
+Export[
+  StringJoin[$ScriptCommandLine[[2]], "/plaq_avg_", $ScriptCommandLine[[3]], ".txt"],
+  plaqbootavg
+];
+
+
 {Mean[plaqbootT], StandardDeviation[plaqbootT]} // InputForm
 Zv = 1 + Zcoef (-20.57) (8/beta)/(16 Pi^2 plaqbootavg[[1]])
 Zav = 1 + Zcoef (-15.82) (8/beta)/(16 Pi^2 plaqbootavg[[1]])
