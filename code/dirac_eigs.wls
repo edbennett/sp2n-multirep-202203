@@ -150,9 +150,10 @@ Do[tmp=eigsortedT[[i]][[1]];count+=1;If[tmp==jtmp,nsT[[jtmp-NEIGS (l-1)-nstart]]
 stmp[[l]]=Table[Table[N[(nsT[[delta j+k]]-nsT[[delta (j-1)+k]])/(delta nconf)],{j,1,neig/delta-1(*-ucut*)}],{k,1,delta}],{l,1,nconf}]
 
 (*Fig. 13*)
+rsconf = Table[Round[nconf*RandomReal[]],{j,1,20}];
 Export[
   $ScriptCommandLine[[6]],
-  Show[Table[ListPlot[Table[{j,stmp[[k]][[1]][[j]]},{j,1,Length[stmp[[1]][[1]]]}],PlotRange->{{0,neig},{0,15}},Frame->True,FrameLabel->{MaTeX["n",Magnification->2],MaTeX["s_n",Magnification->2]},FrameStyle->Directive[Black],BaseStyle->texStyle,ImageSize->600],{k,1, nconf}]]
+  Show[Table[ListPlot[Table[{j,stmp[[k]][[1]][[j]]},{j,1,Length[stmp[[1]][[1]]]}],PlotRange->{{0,neig},{0,15}},Frame->True,FrameLabel->{MaTeX["n",Magnification->2],MaTeX["s_n",Magnification->2]},FrameStyle->Directive[Black],BaseStyle->texStyle,ImageSize->600],{k,rsconf}]]
 ]
 
 sT=Flatten[stmp];
