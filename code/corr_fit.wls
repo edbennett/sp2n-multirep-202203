@@ -16,7 +16,7 @@ nch = Switch[rep,
 Zcoef = Switch[rep, "fun", 5 / 4, "asy", 2, _, Message["Unrecognised representation `1`", rep]; 0];
 
 plaqimport =
-  Import[StringJoin[$ScriptCommandLine[[2]], "/plaq_", $ScriptCommandLine[[3]],
+  Import[StringJoin[$ScriptCommandLine[[2]], "/plaq_corr_", $ScriptCommandLine[[3]],
     ".txt"], "Table"];
 
 corrimport =

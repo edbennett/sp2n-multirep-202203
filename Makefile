@@ -45,6 +45,9 @@ ${PROCESSED_DIR}/force_%.txt : ${DATA_DIR}/out_% | ${PROCESSED_DIR}
 ${PROCESSED_DIR}/plaq_%.txt : ${DATA_DIR}/out_% | ${PROCESSED_DIR}
 	cat $^ | ./code/plaqfilter.sh > $@
 
+${PROCESSED_DIR}/plaq_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
+	cat $^ | ./code/plaqcorrfilter.sh > $@
+
 ${PROCESSED_DIR}/meson_corr_fun_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
 	cat $^ | ./code/mesfilter_ms.sh $$(echo $@ | grep -Eo 'mf[-0-9.]+[0-9]' | grep -Eo '[-0-9.]+[0-9]') 17 > $@
 
@@ -81,22 +84,22 @@ ${PROCESSED_DIR}/ch_corr_%.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
 ${PROCESSED_DIR}/ch_corr_%_unprojected.txt : ${DATA_DIR}/out_corr_% | ${PROCESSED_DIR}
 	cat $^ | ./code/chbfilter_unprojected.sh > $@
 
-${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt ${PROCESSED_DIR}/corr_t_fit_asy_%.txt ${PROCESSED_DIR}/corr_av_fit_asy_%.txt ${PROCESSED_DIR}/corr_at_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${PROCESSED_DIR}/tmeson_corr_asy_%.txt ${PROCESSED_DIR}/atmeson_corr_asy_%.txt ${PROCESSED_DIR}/avmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt ${FIT_PARAMS_DIR}/t_params_asy_%.txt ${FIT_PARAMS_DIR}/av_params_asy_%.txt ${FIT_PARAMS_DIR}/at_params_asy_%.txt
+${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt ${PROCESSED_DIR}/corr_t_fit_asy_%.txt ${PROCESSED_DIR}/corr_av_fit_asy_%.txt ${PROCESSED_DIR}/corr_at_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_corr_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${PROCESSED_DIR}/tmeson_corr_asy_%.txt ${PROCESSED_DIR}/atmeson_corr_asy_%.txt ${PROCESSED_DIR}/avmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt ${FIT_PARAMS_DIR}/t_params_asy_%.txt ${FIT_PARAMS_DIR}/av_params_asy_%.txt ${FIT_PARAMS_DIR}/at_params_asy_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
-${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt
+${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt ${PROCESSED_DIR}/corr_s_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_corr_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt ${FIT_PARAMS_DIR}/s_params_asy_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
-${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt
+${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_asy_%.txt ${PROCESSED_DIR}/corr_v_fit_asy_%.txt &: ${PROCESSED_DIR}/plaq_corr_%.txt ${PROCESSED_DIR}/meson_corr_asy_%.txt ${PROCESSED_DIR}/vmeson_corr_asy_%.txt ${FIT_PARAMS_DIR}/ps_params_asy_%.txt ${FIT_PARAMS_DIR}/v_params_asy_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} asy $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
-${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${PROCESSED_DIR}/corr_s_fit_fun_%.txt ${PROCESSED_DIR}/corr_t_fit_fun_%.txt ${PROCESSED_DIR}/corr_av_fit_fun_%.txt ${PROCESSED_DIR}/corr_at_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${PROCESSED_DIR}/tmeson_corr_fun_%.txt ${PROCESSED_DIR}/atmeson_corr_fun_%.txt ${PROCESSED_DIR}/avmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt ${FIT_PARAMS_DIR}/s_params_fun_%.txt ${FIT_PARAMS_DIR}/t_params_fun_%.txt ${FIT_PARAMS_DIR}/av_params_fun_%.txt ${FIT_PARAMS_DIR}/at_params_fun_%.txt
+${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${PROCESSED_DIR}/corr_s_fit_fun_%.txt ${PROCESSED_DIR}/corr_t_fit_fun_%.txt ${PROCESSED_DIR}/corr_av_fit_fun_%.txt ${PROCESSED_DIR}/corr_at_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_corr_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${PROCESSED_DIR}/tmeson_corr_fun_%.txt ${PROCESSED_DIR}/atmeson_corr_fun_%.txt ${PROCESSED_DIR}/avmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt ${FIT_PARAMS_DIR}/s_params_fun_%.txt ${FIT_PARAMS_DIR}/t_params_fun_%.txt ${FIT_PARAMS_DIR}/av_params_fun_%.txt ${FIT_PARAMS_DIR}/at_params_fun_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
-${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${PROCESSED_DIR}/corr_s_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt ${FIT_PARAMS_DIR}/s_params_fun_%.txt
+${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt ${PROCESSED_DIR}/corr_s_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_corr_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt ${FIT_PARAMS_DIR}/s_params_fun_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
-${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt
+${PROCESSED_DIR}/plaq_avg_%.txt ${PROCESSED_DIR}/corr_ps_fit_fun_%.txt ${PROCESSED_DIR}/corr_v_fit_fun_%.txt &: ${PROCESSED_DIR}/plaq_corr_%.txt ${PROCESSED_DIR}/meson_corr_fun_%.txt ${PROCESSED_DIR}/vmeson_corr_fun_%.txt ${FIT_PARAMS_DIR}/ps_params_fun_%.txt ${FIT_PARAMS_DIR}/v_params_fun_%.txt
 	${WOLFRAMSCRIPT} -f code/corr_fit.wls ${PROCESSED_DIR} $* ${FIT_PARAMS_DIR} fun $$(echo $* | sed -E 's/([0-9]+)x([0-9]+)[x0-9]+b([0-9.]+).*/\1 \2 \3/')
 
 ${PROCESSED_DIR}/corr_ch_fit_%.txt : ${PROCESSED_DIR}/ch_corr_%.txt ${FIT_PARAMS_DIR} | ${PROCESSED_DIR} ${FIT_PARAMS_DIR}/ch_params_%.txt
@@ -215,7 +218,7 @@ clean-data :
 
 clean : clean-tables clean-plots clean-data clean-datapackage
 
-all_plots : ${FIG1_OUT_DIR}/force_summary.pdf ${FIG45_OUTPUTS} ${FIG6_OUTPUTS} ${FIG7_OUTPUTS} ${FIG8_OUTPUTS} ${FIG9_10_OUTPUTS} ${FIG11_15_OUTPUTS} ${FIG16_17_OUTPUTS} ${FIG18_19_OUTPUTS} ${FIG20_OUTPUT}
+all_plots : ${FIG11_15_OUTPUTS} ${FIG1_OUT_DIR}/force_summary.pdf ${FIG45_OUTPUTS} ${FIG6_OUTPUTS} ${FIG7_OUTPUTS} ${FIG8_OUTPUTS} ${FIG9_10_OUTPUTS} ${FIG16_17_OUTPUTS} ${FIG18_19_OUTPUTS} ${FIG20_OUTPUT}
 
 all_tables : ${TAB2_OUTPUT} ${TAB3_OUTPUT} ${TAB456_OUTPUT}
 
