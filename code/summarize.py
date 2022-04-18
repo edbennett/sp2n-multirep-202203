@@ -24,7 +24,7 @@ def get_data_filename(data_dir, ensemble, rep, channel):
 
 
 def get_args():
-    from argparse import ArgumentParser, FileType
+    from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('ensembles_file')
     parser.add_argument('--data_dir', default='processed_data')

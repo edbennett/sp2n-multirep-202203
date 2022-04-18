@@ -115,13 +115,18 @@ def main():
     from argparse import ArgumentParser
     parser = ArgumentParser()
     parser.add_argument('filenames', metavar='filename', nargs='+')
-    parser.add_argument('--output_filename', required=True)
+    parser.add_argument('--latex_output_filename', required=True)
+    parser.add_argument('--csv_output_filename')
     args = parser.parse_args()
 
     data = [get_row_data(filename) for filename in args.filenames]
     table_content = tabulate(data)
-    with open(args.output_filename, 'w') as f:
+    with open(args.latex_output_filename, 'w') as f:
         f.write(table_content)
+    if args.csv_output_filename:
+        df = pd.DataFrame.from_records(data)
+        df.to_csv(args.csv_output_filename, index=False)
+
 
 
 if __name__ == '__main__':

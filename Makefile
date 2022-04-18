@@ -181,11 +181,11 @@ FIG18_19_INPUTS := ${PROCESSED_DIR}/ch_corr_48x24x24x24b6.5mas-1.01mf-0.71_unpro
 ${FIG18_19_OUTPUTS} &: | ${FIG18_19_INPUTS} ${FIG18_19_OUT_DIR}
 	${WOLFRAMSCRIPT} -f code/chimera_corr.wls ${PROCESSED_DIR} 48x24x24x24b6.5mas-1.01mf-0.71 ${FIT_PARAMS_DIR} ${FIG18_19_OUT_DIR} 48 24 6.5
 
-TAB2_OUTPUT := ${TABLES_DIR}/eig_table.tex
+TAB2_OUTPUTS := ${TABLES_DIR}/eig_table.tex eig_summary.csv
 TAB2_INPUTS := $(foreach SUFFIX, su2_4x4x4x4b1.8mf-1.0 su4_4x4x4x4b10.0mf-0.2 su4_4x4x4x4b10.0mas-0.2 4x4x4x4b8.0mf-0.2 4x4x4x4b8.0mas-0.2, ${PROCESSED_DIR}/eigs_${SUFFIX})
 
-${TAB2_OUTPUT} : ${TAB2_INPUTS} | ${TABLES_DIR}
-	python code/eigs_qmsquared.py $^ --output_filename=$@
+${TAB2_OUTPUTS} &: ${TAB2_INPUTS} | ${TABLES_DIR}
+	python code/eigs_qmsquared.py $^ --latex_output_filename=${TABLES_DIR}/eig_table.tex --csv_output_filename eig_summary.csv
 
 
 TAB3_OUTPUT := ${TABLES_DIR}/plaq_table.tex
@@ -208,28 +208,31 @@ ${FIG20_OUTPUT} : ${FIG20_OUT_DIR} | ${LARGE_SUMMARIES}
 
 
 clean-tables :
-	rm -r ${TABLES_DIR}
+	rm -rf ${TABLES_DIR}
 
 clean-plots :
-	rm -r ${PLOTS_DIR}
+	rm -rf ${PLOTS_DIR}
 
 clean-data :
-	rm -r ${PROCESSED_DIR}/*
+	rm -rf ${PROCESSED_DIR}/*
 
 clean : clean-tables clean-plots clean-data clean-datapackage
 
 all_plots : ${FIG11_15_OUTPUTS} ${FIG1_OUT_DIR}/force_summary.pdf ${FIG45_OUTPUTS} ${FIG6_OUTPUTS} ${FIG7_OUTPUTS} ${FIG8_OUTPUTS} ${FIG9_10_OUTPUTS} ${FIG16_17_OUTPUTS} ${FIG18_19_OUTPUTS} ${FIG20_OUTPUT}
 
-all_tables : ${TAB2_OUTPUT} ${TAB3_OUTPUT} ${TAB456_OUTPUT}
+all_tables : ${TAB2_OUTPUTS} ${TAB3_OUTPUT} ${TAB456_OUTPUT}
 
 paper_outputs : all_plots all_tables
 
-datapackage : data.h5
+datapackage : data.h5 spectrum_summary.csv eig_summary.csv
 
 data.h5 : $(wildcard ${DATA_DIR}/out_*)
 	python code/package_data.py $^ --output_file $@
 
+spectrum_summary.csv : | ${CORR_FITS}
+	python code/csv_summary.py ${ENSEMBLES_FILE} --data_dir ${PROCESSED_DIR} --output_file $@
+
 clean-datapackage :
-	rm data.h5
+	rm -f data.h5 spectrum_summary.csv eig_summary.csv
 
 .DEFAULT_GOAL := paper_outputs
