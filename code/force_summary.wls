@@ -1,5 +1,7 @@
 #!/usr/bin/env wolframscript
 
+SeedRandom[StringJoin[$ScriptCommandLine]];
+
 forceimport=Import[$ScriptCommandLine[[2]],"Table"];
 
 Export[$ScriptCommandLine[[3]], ListPlot[Table[Table[forceimport[[i]][[j]],{i,1,Length[forceimport]}],{j,2,5}],Frame->True,Joined->True,PlotRange->All, LabelStyle->{FontSize->16, FontFamily->"Times", Black}, FrameLabel->{"MD Trajectory", "MD Force"}]]

@@ -1,3 +1,5 @@
+SeedRandom[StringJoin[$ScriptCommandLine]];
+
 (* Pseudo scalar *)
 
 (* Import data and choose initial lattice parameters *)

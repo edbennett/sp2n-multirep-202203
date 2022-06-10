@@ -1,3 +1,5 @@
+SeedRandom[StringJoin[$ScriptCommandLine]];
+
 Needs["ErrorBarPlots`"]
 Needs["PlotLegends`"]
 

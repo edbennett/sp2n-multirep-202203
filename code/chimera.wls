@@ -1,5 +1,7 @@
 (* Extraction of mass from the Chimera baryon correlation function *)
 
+SeedRandom[StringJoin[$ScriptCommandLine]];
+
 NT = ToExpression[$ScriptCommandLine[[5]]]; (*number of temporal lattice*)
 NS = ToExpression[$ScriptCommandLine[[6]]]; (*number of one of the spatial lattice*)
 beta = ToExpression[$ScriptCommandLine[[7]]];

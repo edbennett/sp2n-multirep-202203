@@ -1,5 +1,7 @@
 #!/usr/bin/env wolframscript
 
+SeedRandom[StringJoin[$ScriptCommandLine]];
+
 Needs["ErrorBarPlots`"]
 Needs["PlotLegends`"]
 
