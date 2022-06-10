@@ -146,16 +146,16 @@ chcorrimplot =
  ErrorListPlot[
   Table[{{corrchimbootavgT[[t]][[1]], corrchimbootavgT[[t]][[2]]},
     ErrorBar[corrchimbootavgT[[t]][[3]]]}, {t, 2, NT - 2}], Frame -> True,
-  PlotRange -> {{9.5, 38.5}, {-0.000000055, .000000055}}, AxesStyle -> Thick,
+  PlotRange -> {{9.5, 38.5}, {-0.00000000000000007, .00000000000000007}},
+  AxesStyle -> Thick,
   PlotMarkers -> {"\[EmptyCircle]", 18}, PlotStyle -> RGBColor[0, 0, 1],
   AxesStyle -> Black,
   FrameLabel -> {MaTeX["t", Magnification -> 2],
-    MaTeX["C_{\\rm CB}^{\,\\rm im}(t)\,(\\times 10^{-8})",
+    MaTeX["C_{\\rm CB}^{\,\\rm im}(t)\,(\\times 10^{-17})",
      Magnification -> 2]},
-  FrameTicks -> {{{{0, 0}, {1 10^(-8), 1}, {2 10^(-8), 2}, {3 10^(-8),
-       3}, {4 10^(-8), 4}, {5 10^(-8),
-       5}, {-5 10^(-8), -5}, {-4 10^(-8), -4}, {-3 10^(-8), -3}, {-2 10^(-8), \
--2}, {-1 10^(-8), -1}}, Automatic}, {Automatic, Automatic}},
+  FrameTicks -> {{{{0, 0}, {2 10^(-17), 2}, {4 10^(-17), 4}, {6 10^(-17), 6},
+       {-6 10^(-17), -6}, {-4 10^(-17), -4}, {-2 10^(-17), -2}}, Automatic},
+       {Automatic, Automatic}},
   FrameStyle -> Directive[Thickness[0.002], Black], BaseStyle -> texStyle,
   ImageSize -> 600];(*effective mass plot*)
 
