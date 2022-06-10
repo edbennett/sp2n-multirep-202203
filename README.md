@@ -5,6 +5,10 @@
 This repository contains the analysis code used to prepare the plots and tables
 included in [Lattice studies of the Sp(4) gauge theory with two fundamental and three antisymmetric Dirac fermions][multirep-paper].
 
+In particular, likely due to the Mathematica implementation of the fitting
+functions, answers do not reproduce bit-wise; there are fluctuations
+within error bars visible in final results.
+
 ## Health warning
 
 This analysis was originally performed manually using Mathematica, and was
