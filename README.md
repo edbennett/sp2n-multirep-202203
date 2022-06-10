@@ -1,5 +1,7 @@
 # Lattice studies of the Sp(4) gauge theory with two fundamental and three antisymmetric Dirac fermions&mdash;code release
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6472232.svg)](https://doi.org/10.5281/zenodo.6472232)
+
 This repository contains the analysis code used to prepare the plots and tables
 included in [Lattice studies of the Sp(4) gauge theory with two fundamental and three antisymmetric Dirac fermions][multirep-paper].
 
