@@ -42,8 +42,10 @@ version of Make installed on macOS by default.
 
 ### Data
 
-* Download and extract the data. Specifically, you need the two directories
-  `data`, and `fit_params`. By default it is expected that these are placed
+* Download and extract the data, [available from Zenodo][data].
+  Specifically, you need the two directories
+  `data` (from `raw_data.zip`) and `fit_params` (from `fit_params.zip`).
+  By default it is expected that these are placed
   in the root directory of the repository, but this can be changed in the
   `Makefile`.
 
@@ -65,4 +67,5 @@ version of Make installed on macOS by default.
 * On a single Apple M1 CPU core, the full analysis takes around an hour.
 
 
+[data]: https://doi.org/10.5281/zenodo.6637515
 [multirep-paper]: https://arxiv.org/abs/2202.05516
